@@ -1,5 +1,5 @@
 var SOM_TIRO = new Audio();
-SOM_TIRO.src = "snd/tiro.mp3";
+SOM_TIRO.src = "assets/snd/tiro.mp3";
 SOM_TIRO.volume = 0.2;
 SOM_TIRO.load();
 

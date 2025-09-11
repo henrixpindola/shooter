@@ -24,7 +24,7 @@
     // Carregar todas
     for (var i in imagens) {
       var img = new Image();
-      img.src = "img/" + imagens[i];
+      img.src = "assets/img/" + imagens[i];
       img.onload = carregando;
       totalImagens++;
 
@@ -35,7 +35,7 @@
 
   function carregarMusicas() {
     musicaAcao = new Audio();
-    musicaAcao.src = "snd/musica-acao.mp3";
+    musicaAcao.src = "assets/sounds/musica-acao.mp3";
     musicaAcao.load();
     musicaAcao.volume = 0.5;
     musicaAcao.loop = true;
