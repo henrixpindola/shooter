@@ -3,7 +3,7 @@ SOM_TIRO.src = "assets/snd/tiro.mp3";
 SOM_TIRO.volume = 0.2;
 SOM_TIRO.load();
 
-function Tiro (context, nave) {
+function Tiro(context, nave) {
   this.context = context;
   this.nave = nave;
   // Posicionar o tiro no bico da nave
@@ -33,9 +33,9 @@ Tiro.prototype = {
     ctx.restore();
   },
   retangulosColisao: function () {
-    return [ {x: this.x, y: this.y, largura: this.largura, altura: this.altura} ]
+    return [{ x: this.x, y: this.y, largura: this.largura, altura: this.altura }]
   },
   colidiuCom: function (outro) {
-    
+
   }
 }

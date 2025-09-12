@@ -36,7 +36,7 @@ Nave.prototype = {
       this.spritesheet.linha = 2;
     else
       this.spritesheet.linha = 0;
-    
+
     this.spritesheet.desenhar(this.x, this.y);
     this.spritesheet.proximoQuadro();
 
@@ -48,10 +48,10 @@ Nave.prototype = {
   },
   retangulosColisao: function () {
     let rets = [
-                  {x: this.x+2, y:this.y+19, largura: 9, altura: 13},
-                  {x: this.x+13, y:this.y+3, largura: 10, altura: 33},
-                  {x: this.x+25, y:this.y+19, largura: 9, altura: 13},
-               ];
+      { x: this.x + 2, y: this.y + 19, largura: 9, altura: 13 },
+      { x: this.x + 13, y: this.y + 3, largura: 10, altura: 33 },
+      { x: this.x + 25, y: this.y + 19, largura: 9, altura: 13 },
+    ];
     // let ctx = this.context;
     // for(let i in rets){
     //   ctx.save();

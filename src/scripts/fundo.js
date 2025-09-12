@@ -1,4 +1,4 @@
-function Fundo (context, imagem) {
+function Fundo(context, imagem) {
   this.context = context;
   this.imagem = imagem;
   this.velocidade = 0;
@@ -13,7 +13,7 @@ Fundo.prototype = {
     // Emenda passou da posição
     if (this.posicaoEmenda > this.imagem.height)
       this.posicaoEmenda = 0;
-    
+
   },
   desenhar: function () {
     let img = this.imagem;
@@ -22,6 +22,6 @@ Fundo.prototype = {
     this.context.drawImage(img, 0, posicaoY, img.width, img.height);
     // Segunda cópia
     posicaoY = this.posicaoEmenda;
-    this.context.drawImage(img, 0, posicaoY, img.width, img.height); 
+    this.context.drawImage(img, 0, posicaoY, img.width, img.height);
   }
 }

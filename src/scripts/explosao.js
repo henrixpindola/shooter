@@ -3,7 +3,7 @@ SOM_EXPLOSAO.src = "assets/snd/explosao.mp3";
 SOM_EXPLOSAO.volume = 0.3;
 SOM_EXPLOSAO.load();
 
-function Explosao (context, imagem, x, y) {
+function Explosao(context, imagem, x, y) {
   this.context = context;
   this.imagem = imagem;
   this.spritesheet = new Spritesheet(context, imagem, 1, 5);
@@ -21,7 +21,7 @@ function Explosao (context, imagem, x, y) {
 
 Explosao.prototype = {
   atualizar: function () {
-    
+
   },
   desenhar: function () {
     this.spritesheet.desenhar(this.x, this.y);

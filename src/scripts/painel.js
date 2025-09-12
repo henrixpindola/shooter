@@ -1,4 +1,4 @@
-function Painel (context, nave) {
+function Painel(context, nave) {
   this.context = context;
   this.nave = nave;
   this.spritesheet = new Spritesheet(context, nave.imagem, 3, 2);
@@ -7,7 +7,7 @@ function Painel (context, nave) {
 
 Painel.prototype = {
   atualizar: function () {
-    
+
   },
   desenhar: function () {
     // Reduz o desenho pela metade
@@ -15,8 +15,8 @@ Painel.prototype = {
 
     let x = 20;
     let y = 20;
-    
-    for (let i=1; i<=this.nave.vidasExtras; i++) {
+
+    for (let i = 1; i <= this.nave.vidasExtras; i++) {
       this.spritesheet.desenhar(x, y);
       x += 40;
     }

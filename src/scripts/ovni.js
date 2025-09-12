@@ -1,4 +1,4 @@
-function Ovni (context, imagem, imgExplosao) {
+function Ovni(context, imagem, imgExplosao) {
   this.context = context;
   this.imagem = imagem;
   this.x = 0;
@@ -22,10 +22,10 @@ Ovni.prototype = {
   },
   retangulosColisao: function () {
     let rets = [
-                  {x: this.x+20, y: this.y+1, largura: 25, altura: 10},
-                  {x: this.x+2, y: this.y+11, largura: 60, altura: 12},
-                  {x: this.x+20, y: this.y+23, largura: 25, altura: 7},
-               ];
+      { x: this.x + 20, y: this.y + 1, largura: 25, altura: 10 },
+      { x: this.x + 2, y: this.y + 11, largura: 60, altura: 12 },
+      { x: this.x + 20, y: this.y + 23, largura: 25, altura: 7 },
+    ];
     // let ctx = this.context;
     // for(let i in rets){
     //   ctx.save();
@@ -33,7 +33,7 @@ Ovni.prototype = {
     //   ctx.strokeRect(rets[i].x, rets[i].y, rets[i].largura, rets[i].altura);
     //   ctx.restore();
     // }
-    return rets;                                 
+    return rets;
   },
   colidiuCom: function (outro) {
     if (outro instanceof Tiro) {

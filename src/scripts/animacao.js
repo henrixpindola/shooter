@@ -11,28 +11,28 @@ function Animacao(context) {
 }
 
 Animacao.prototype = {
-   novoSprite: function(sprite) {
+   novoSprite: function (sprite) {
       this.sprites.push(sprite);
       sprite.animacao = this;
    },
-   ligar: function() {
+   ligar: function () {
       this.ultimoCiclo = 0;
       this.ligado = true;
       this.proximoFrame();
    },
-   desligar: function() {
+   desligar: function () {
       this.ligado = false;
    },
-   proximoFrame: function() {
+   proximoFrame: function () {
       // Posso continuar?
-      if ( ! this.ligado ) return;
+      if (!this.ligado) return;
 
       // A cada ciclo, limpamos a tela ou desenhamos um fundo
       //this.limparTela();
 
       let agora = new Date().getTime();
       if (this.ultimoCiclo == 0) this.ultimoCiclo = agora;
-      
+
       this.decorrido = agora - this.ultimoCiclo;
 
       // Atualizamos o estado dos sprites
@@ -44,7 +44,7 @@ Animacao.prototype = {
          this.sprites[i].desenhar();
 
       // Processamentos gerais
-      for(let i in this.processamentos)
+      for (let i in this.processamentos)
          this.processamentos[i].processar();
 
       // Processamento de exclusões
@@ -55,7 +55,7 @@ Animacao.prototype = {
 
       // Chamamos o próximo ciclo
       let animacao = this;
-      requestAnimationFrame(function() {
+      requestAnimationFrame(function () {
          animacao.proximoFrame();
       });
    },

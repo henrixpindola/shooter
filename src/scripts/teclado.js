@@ -20,28 +20,28 @@ function Teclado(elemento) {
 
    let teclado = this;
 
-   elemento.addEventListener('keydown', function(evento) {
+   elemento.addEventListener('keydown', function (evento) {
       let tecla = evento.keyCode;  // Tornando mais legível ;)
       teclado.pressionadas[tecla] = true;
 
       // Disparar somente se for o primeiro keydown da tecla
       if (teclado.funcoesDisparo[tecla] && !teclado.disparadas[tecla]) {
 
-          teclado.disparadas[tecla] = true;
-          teclado.funcoesDisparo[tecla] () ;
+         teclado.disparadas[tecla] = true;
+         teclado.funcoesDisparo[tecla]();
       }
    });
 
-   elemento.addEventListener('keyup', function(evento) {
+   elemento.addEventListener('keyup', function (evento) {
       teclado.pressionadas[evento.keyCode] = false;
       teclado.disparadas[evento.keyCode] = false;
    });
 }
 Teclado.prototype = {
-   pressionada: function(tecla) {
+   pressionada: function (tecla) {
       return this.pressionadas[tecla];
    },
-   disparou: function(tecla, callback) {
+   disparou: function (tecla, callback) {
       this.funcoesDisparo[tecla] = callback;
    }
 }

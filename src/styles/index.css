@@ -4,12 +4,11 @@
   --accent: #38bdf8;
 }
 
-#link_jogar
-{
+.playbtn {
   /* Inicia oculto */
   display: none;
   /* Cores e fundo */
-  color: yellow;
+  color: rgb(255, 149, 0);
   background: url("../assets/img/botao-jogar.png");
   /* Fonte */
   font-size: 20px;

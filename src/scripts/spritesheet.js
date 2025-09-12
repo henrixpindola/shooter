@@ -33,6 +33,6 @@ Spritesheet.prototype = {
     const largura = this.imagem.width / this.numColunas;
     const altura = this.imagem.height / this.numLinhas;
 
-    this.context.drawImage(this.imagem, largura*this.coluna, altura*this.linha, largura, altura, x, y, largura, altura);
+    this.context.drawImage(this.imagem, largura * this.coluna, altura * this.linha, largura, altura, x, y, largura, altura);
   }
 }

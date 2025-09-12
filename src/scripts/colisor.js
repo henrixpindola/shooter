@@ -1,4 +1,4 @@
-function Colisor () {
+function Colisor() {
   this.sprites = [];
   this.aoColidir = null;
   this.spritesExcluir = [];
@@ -12,21 +12,21 @@ Colisor.prototype = {
   processar: function () {
     let jaTestados = new Object();
 
-    for(let i in this.sprites) {
-      for(let j in this.sprites) {
-        if (i==j) continue;
+    for (let i in this.sprites) {
+      for (let j in this.sprites) {
+        if (i == j) continue;
 
         let id1 = this.stringUnica(this.sprites[i]);
         let id2 = this.stringUnica(this.sprites[j]);
 
-        if (! jaTestados[id1]) jaTestados[id1] = [];
-        if (! jaTestados[id2]) jaTestados[id2] = [];
+        if (!jaTestados[id1]) jaTestados[id1] = [];
+        if (!jaTestados[id2]) jaTestados[id2] = [];
 
-        if (!(jaTestados[id1].indexOf(id2) >0 || jaTestados[id2].indexOf(id1) >= 0 )) {
+        if (!(jaTestados[id1].indexOf(id2) > 0 || jaTestados[id2].indexOf(id1) >= 0)) {
           this.testarColisao(this.sprites[i], this.sprites[j]);
           jaTestados[id1].push(id2);
           jaTestados[id2].push(id1);
-        }    
+        }
       }
     }
     this.processarExclusoes();
@@ -36,8 +36,8 @@ Colisor.prototype = {
     let rets2 = sprite2.retangulosColisao();
 
     colisoes:
-    for(let i in rets1) {
-      for(let j in rets2) {
+    for (let i in rets1) {
+      for (let j in rets2) {
         if (this.retangulosColidem(rets1[i], rets2[j])) {
           sprite1.colidiuCom(sprite2);
           sprite2.colidiuCom(sprite1);
@@ -54,11 +54,11 @@ Colisor.prototype = {
   stringUnica: function (sprite) {
     let str = '';
     let retangulos = sprite.retangulosColisao();
-    for(let i in retangulos) {
+    for (let i in retangulos) {
       str += 'x: ' + retangulos[i].x + ', ' +
-             'y: ' + retangulos[i].y + ', ' +
-             'l: ' + retangulos[i].largura + ', ' +
-             'a: ' + retangulos[i].altura + '\n';
+        'y: ' + retangulos[i].y + ', ' +
+        'l: ' + retangulos[i].largura + ', ' +
+        'a: ' + retangulos[i].altura + '\n';
     }
     return str;
   },
@@ -67,7 +67,7 @@ Colisor.prototype = {
   },
   processarExclusoes: function () {
     let novoArray = [];
-    for(let i in this.sprites) {
+    for (let i in this.sprites) {
       if (this.spritesExcluir.indexOf(this.sprites[i]) == -1)
         novoArray.push(this.sprites[i]);
     }
