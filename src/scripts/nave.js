@@ -15,7 +15,7 @@ function Nave(context, teclado, imagem, imgExplosao) {
 
 Nave.prototype = {
   atualizar: function () {
-    var incremento = this.velocidade * this.animacao.decorrido / 1000;
+    let incremento = this.velocidade * this.animacao.decorrido / 1000;
     if (this.teclado.pressionada(SETA_ESQUERDA) && this.x > 0)
       this.x -= incremento;
 
@@ -42,18 +42,18 @@ Nave.prototype = {
 
   },
   atirar: function () {
-    var tiro = new Tiro(this.context, this);
+    let tiro = new Tiro(this.context, this);
     this.animacao.novoSprite(tiro);
     this.colisor.novoSprite(tiro);
   },
   retangulosColisao: function () {
-    var rets = [
+    let rets = [
                   {x: this.x+2, y:this.y+19, largura: 9, altura: 13},
                   {x: this.x+13, y:this.y+3, largura: 10, altura: 33},
                   {x: this.x+25, y:this.y+19, largura: 9, altura: 13},
                ];
-    // var ctx = this.context;
-    // for(var i in rets){
+    // let ctx = this.context;
+    // for(let i in rets){
     //   ctx.save();
     //   ctx.strokeStyle = 'yellow';
     //   ctx.strokeRect(rets[i].x, rets[i].y, rets[i].largura, rets[i].altura);
@@ -68,13 +68,13 @@ Nave.prototype = {
       this.colisor.excluirSprite(this);
       this.colisor.excluirSprite(outro);
 
-      var exp1 = new Explosao(this.context, this.imgExplosao, this.x, this.y);
-      var exp2 = new Explosao(this.context, this.imgExplosao, outro.x, outro.y);
+      let exp1 = new Explosao(this.context, this.imgExplosao, this.x, this.y);
+      let exp2 = new Explosao(this.context, this.imgExplosao, outro.x, outro.y);
 
       this.animacao.novoSprite(exp1);
       this.animacao.novoSprite(exp2);
 
-      var nave = this;
+      let nave = this;
       exp1.fimDaExplosao = function () {
         nave.vidasExtras--;
         if (nave.vidasExtras < 1) {
@@ -90,7 +90,7 @@ Nave.prototype = {
     }
   },
   posicionar: function () {
-    var canvas = this.context.canvas;
+    let canvas = this.context.canvas;
     this.x = canvas.width / 2 - 18;
     this.y = canvas.height - 48;
   }

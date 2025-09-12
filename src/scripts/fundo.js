@@ -16,9 +16,9 @@ Fundo.prototype = {
     
   },
   desenhar: function () {
-    var img = this.imagem;
+    let img = this.imagem;
     // Primeira cópia
-    var posicaoY = this.posicaoEmenda - img.height;
+    let posicaoY = this.posicaoEmenda - img.height;
     this.context.drawImage(img, 0, posicaoY, img.width, img.height);
     // Segunda cópia
     posicaoY = this.posicaoEmenda;

@@ -1,4 +1,4 @@
-var SOM_TIRO = new Audio();
+const SOM_TIRO = new Audio();
 SOM_TIRO.src = "assets/snd/tiro.mp3";
 SOM_TIRO.volume = 0.2;
 SOM_TIRO.load();
@@ -26,7 +26,7 @@ Tiro.prototype = {
     }
   },
   desenhar: function () {
-    var ctx = this.context;
+    let ctx = this.context;
     ctx.save();
     ctx.fillStyle = this.cor;
     ctx.fillRect(this.x, this.y, this.largura, this.altura);

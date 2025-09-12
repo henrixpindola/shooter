@@ -1,11 +1,11 @@
   // Canvas e Context
-  var canvas = document.getElementById('canvas_animacao');
-  var context = canvas.getContext('2d');
+  const canvas = document.getElementById('canvas_animacao');
+  const context = canvas.getContext('2d');
 
   // Variáveis principais
-  var imagens, animacao, teclado, colisor, nave, criadorInimigos;
-  var totalImagens = 0, carregadas = 0;
-  var musicaAcao;
+  let imagens, animacao, teclado, colisor, nave, criadorInimigos;
+  let totalImagens = 0, carregadas = 0;
+  let musicaAcao;
 
   // Começa carregando as imagens
   carregarImagens();
@@ -22,8 +22,8 @@
       explosao: "explosao.png"
     };
     // Carregar todas
-    for (var i in imagens) {
-      var img = new Image();
+    for (let i in imagens) {
+      let img = new Image();
       img.src = "assets/img/" + imagens[i];
       img.onload = carregando;
       totalImagens++;
@@ -44,8 +44,8 @@
   }
 
   // CARREGAMENTO E INICIALIZAÇAO
-  // var carregadas = 0;
-  // var total = 5;
+  // let carregadas = 0;
+  // let total = 5;
 
   // Função que mostra o progresso do carregamento
   function carregando() {
@@ -59,8 +59,8 @@
     context.fillText("Carregando...", 100, 200);
     // Barra de loading
     carregadas++;
-    var tamanhoTotal = 300;
-    var tamanho = carregadas / totalImagens * tamanhoTotal;
+    let tamanhoTotal = 300;
+    let tamanho = carregadas / totalImagens * tamanhoTotal;
     context.fillStyle = 'yellow';
     context.fillRect(100, 250, tamanho, 50);
 
@@ -138,8 +138,8 @@
       ultimoOvni: new Date().getTime(),
 
       processar: function () {
-        var agora = new Date().getTime();
-        var decorrido = agora - this.ultimoOvni;
+        let agora = new Date().getTime();
+        let decorrido = agora - this.ultimoOvni;
         if (decorrido > 1000) {
           novoOvni();
           this.ultimoOvni = agora;
@@ -152,8 +152,8 @@
 
   // Implementa um novo inimigo
   function novoOvni() {
-    var imgOvni = imagens.ovni;
-    var ovni = new Ovni(context, imgOvni, imagens.explosao);
+    let imgOvni = imagens.ovni;
+    let ovni = new Ovni(context, imgOvni, imagens.explosao);
     // Mínimo: 500; máximo: 1000
     ovni.velocidade = Math.floor(500 + Math.random() * (1000 - 500 + 1));
     // Mínimo: 0; máximo: largura do canvas - largura do ovni
@@ -249,7 +249,7 @@
   }
 
   function removerInimigos() {
-    for (var i in animacao.sprites) {
+    for (let i in animacao.sprites) {
       if (animacao.sprites[i] instanceof Ovni)
         animacao.excluirSprite(animacao.sprites[i]);
     }

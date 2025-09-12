@@ -16,18 +16,18 @@ Ovni.prototype = {
     }
   },
   desenhar: function () {
-    var ctx = this.context;
-    var img = this.imagem;
+    let ctx = this.context;
+    let img = this.imagem;
     ctx.drawImage(img, this.x, this.y, img.width, img.height);
   },
   retangulosColisao: function () {
-    var rets = [
+    let rets = [
                   {x: this.x+20, y: this.y+1, largura: 25, altura: 10},
                   {x: this.x+2, y: this.y+11, largura: 60, altura: 12},
                   {x: this.x+20, y: this.y+23, largura: 25, altura: 7},
                ];
-    // var ctx = this.context;
-    // for(var i in rets){
+    // let ctx = this.context;
+    // for(let i in rets){
     //   ctx.save();
     //   ctx.strokeStyle = 'yellow';
     //   ctx.strokeRect(rets[i].x, rets[i].y, rets[i].largura, rets[i].altura);
@@ -42,7 +42,7 @@ Ovni.prototype = {
       this.animacao.excluirSprite(outro);
       this.colisor.excluirSprite(outro);
 
-      var explosao = new Explosao(this.context, this.imgExplosao, this.x, this.y);
+      let explosao = new Explosao(this.context, this.imgExplosao, this.x, this.y);
       this.animacao.novoSprite(explosao);
     }
   }

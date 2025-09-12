@@ -1,4 +1,4 @@
-var SOM_EXPLOSAO = new Audio();
+const SOM_EXPLOSAO = new Audio();
 SOM_EXPLOSAO.src = "assets/snd/explosao.mp3";
 SOM_EXPLOSAO.volume = 0.3;
 SOM_EXPLOSAO.load();
@@ -10,7 +10,7 @@ function Explosao (context, imagem, x, y) {
   this.spritesheet.intervalo = 75;
   this.x = x;
   this.y = y;
-  var explosao = this;
+  let explosao = this;
   this.spritesheet.fimDoCiclo = function () {
     explosao.animacao.excluirSprite(explosao);
     if (explosao.fimDaExplosao) explosao.fimDaExplosao();

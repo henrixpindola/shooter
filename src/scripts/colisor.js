@@ -10,14 +10,14 @@ Colisor.prototype = {
     sprite.colisor = this;
   },
   processar: function () {
-    var jaTestados = new Object();
+    let jaTestados = new Object();
 
-    for(var i in this.sprites) {
-      for(var j in this.sprites) {
+    for(let i in this.sprites) {
+      for(let j in this.sprites) {
         if (i==j) continue;
 
-        var id1 = this.stringUnica(this.sprites[i]);
-        var id2 = this.stringUnica(this.sprites[j]);
+        let id1 = this.stringUnica(this.sprites[i]);
+        let id2 = this.stringUnica(this.sprites[j]);
 
         if (! jaTestados[id1]) jaTestados[id1] = [];
         if (! jaTestados[id2]) jaTestados[id2] = [];
@@ -32,12 +32,12 @@ Colisor.prototype = {
     this.processarExclusoes();
   },
   testarColisao: function (sprite1, sprite2) {
-    var rets1 = sprite1.retangulosColisao();
-    var rets2 = sprite2.retangulosColisao();
+    let rets1 = sprite1.retangulosColisao();
+    let rets2 = sprite2.retangulosColisao();
 
     colisoes:
-    for(var i in rets1) {
-      for(var j in rets2) {
+    for(let i in rets1) {
+      for(let j in rets2) {
         if (this.retangulosColidem(rets1[i], rets2[j])) {
           sprite1.colidiuCom(sprite2);
           sprite2.colidiuCom(sprite1);
@@ -52,9 +52,9 @@ Colisor.prototype = {
 
   },
   stringUnica: function (sprite) {
-    var str = '';
-    var retangulos = sprite.retangulosColisao();
-    for(var i in retangulos) {
+    let str = '';
+    let retangulos = sprite.retangulosColisao();
+    for(let i in retangulos) {
       str += 'x: ' + retangulos[i].x + ', ' +
              'y: ' + retangulos[i].y + ', ' +
              'l: ' + retangulos[i].largura + ', ' +
@@ -66,8 +66,8 @@ Colisor.prototype = {
     this.spritesExcluir.push(sprite);
   },
   processarExclusoes: function () {
-    var novoArray = [];
-    for(var i in this.sprites) {
+    let novoArray = [];
+    for(let i in this.sprites) {
       if (this.spritesExcluir.indexOf(this.sprites[i]) == -1)
         novoArray.push(this.sprites[i]);
     }

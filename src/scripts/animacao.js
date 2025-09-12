@@ -30,21 +30,21 @@ Animacao.prototype = {
       // A cada ciclo, limpamos a tela ou desenhamos um fundo
       //this.limparTela();
 
-      var agora = new Date().getTime();
+      let agora = new Date().getTime();
       if (this.ultimoCiclo == 0) this.ultimoCiclo = agora;
       
       this.decorrido = agora - this.ultimoCiclo;
 
       // Atualizamos o estado dos sprites
-      for (var i in this.sprites)
+      for (let i in this.sprites)
          this.sprites[i].atualizar();
 
       // Desenhamos os sprites
-      for (var i in this.sprites)
+      for (let i in this.sprites)
          this.sprites[i].desenhar();
 
       // Processamentos gerais
-      for(var i in this.processamentos)
+      for(let i in this.processamentos)
          this.processamentos[i].processar();
 
       // Processamento de exclusões
@@ -54,13 +54,13 @@ Animacao.prototype = {
       this.ultimoCiclo = agora;
 
       // Chamamos o próximo ciclo
-      var animacao = this;
+      let animacao = this;
       requestAnimationFrame(function() {
          animacao.proximoFrame();
       });
    },
    // limparTela: function() {
-   //    var ctx = this.context;
+   //    let ctx = this.context;
    //    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
    // },
    novoProcessamento: function (processamento) {
@@ -74,13 +74,13 @@ Animacao.prototype = {
       this.processamentosExcluir.push(processamento);
    },
    processarExclusoes: function () {
-      var novoSprites = [];
-      var novoProcessamentos = [];
-      for (var i in this.sprites) {
+      let novoSprites = [];
+      let novoProcessamentos = [];
+      for (let i in this.sprites) {
          if (this.spritesExcluir.indexOf(this.sprites[i]) == -1)
             novoSprites.push(this.sprites[i]);
       }
-      for (var i in this.processamentos) {
+      for (let i in this.processamentos) {
          if (this.processamentosExcluir.indexOf(this.processamentos[i]) == -1)
             novoProcessamentos.push(this.processamentos[i]);
       }
