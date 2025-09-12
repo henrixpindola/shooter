@@ -47,6 +47,7 @@
   // var carregadas = 0;
   // var total = 5;
 
+  // Função que mostra o progresso do carregamento
   function carregando() {
     context.save();
     // Background
@@ -96,7 +97,7 @@
     configuracoesIniciais();
 
   }
-
+    // Velocidades, posições iniciais, controles, etc
   function configuracoesIniciais() {
     // Fundos
     espaco.velocidade = 60;
