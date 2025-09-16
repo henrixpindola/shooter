@@ -132,6 +132,22 @@ function configuracoesIniciais() {
 
 }
 
+  //Níveis - NOVIDADE
+function subirDeNivel() {
+  if (painel.pontuacao != 0 && painel.pontuacao % 100 == 0) {
+    // Aumentar a velocidade dos fundos
+    espaco.velocidade += 20;
+    estrelas.velocidade += 20;
+    nuvens.velocidade += 20;
+    // Aumentar a velocidade dos inimigos
+    for (let i in animacao.sprites) {
+      if (animacao.sprites[i] instanceof Ovni)
+        animacao.sprites[i].velocidade += 20;
+    }
+    painel.nivel += 1;
+  }
+} 
+
 // Cria os inimigos a cada 1 segundo
 function criacaoInimigos() {
   criadorInimigos = {

@@ -3,6 +3,7 @@ function Painel(context, nave) {
   this.nave = nave;
   this.spritesheet = new Spritesheet(context, nave.imagem, 3, 2);
   this.pontuacao = 0;
+  this.nave.nivel = 1; // Nível - NOVIDADE
 }
 
 Painel.prototype = {
@@ -29,6 +30,12 @@ Painel.prototype = {
     ctx.fillStyle = 'white';
     ctx.font = '18px sans-serif';
     ctx.fillText(this.pontuacao, 100, 27);
+    ctx.restore();
+    // Nível - NOVIDADE
+    ctx.save();
+    ctx.fillStyle = 'white';
+    ctx.font = '18px sans-serif';
+    ctx.fillText("Nível: " + this.nave.nivel, 200, 27);
     ctx.restore();
   }
 }
