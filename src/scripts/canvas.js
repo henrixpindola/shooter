@@ -130,11 +130,19 @@ function configuracoesIniciais() {
       painel.pontuacao += 10;
   }
 
+  // Processamento para subir de nível - NOVIDADE
+  animacao.novoProcessamento({
+    processar: function () {
+      subirDeNivel();
+      aleatoriedadeNave();
+      aleatoriedadeInimigos();
+    }
+  });
 }
 
   //Níveis - NOVIDADE
 function subirDeNivel() {
-  if (painel.pontuacao != 0 && painel.pontuacao % 100 == 0) {
+  if (painel.pontuacao != 0 && painel.pontuacao % 20 == 0) {
     // Aumentar a velocidade dos fundos
     espaco.velocidade += 20;
     estrelas.velocidade += 20;
@@ -144,9 +152,40 @@ function subirDeNivel() {
       if (animacao.sprites[i] instanceof Ovni)
         animacao.sprites[i].velocidade += 20;
     }
-    painel.nivel += 1;
+    nave.nivel += 1;
   }
 } 
+
+//Frequência de aleatoriedade do formato da nave, baseado no nível - NOVIDADE 
+function aleatoriedadeNave() {
+  if (painel.pontuacao != 0 && painel.pontuacao % 100 == 0) {
+    if (nave.imagem == imagens.nave) {
+      nave.imagem = imagens.nave2;
+    } else if (nave.imagem == imagens.nave2) {
+      nave.imagem = imagens.nave3;
+    } else if (nave.imagem == imagens.nave3) {
+      nave.imagem = imagens.nave;
+    }
+  }
+}
+
+//Frequência de aleatoriedade do formato dos inimigos, baseado no nível e em maior número de mesmo formato da nave - NOVIDADE
+function aleatoriedadeInimigos() {
+  if (painel.pontuacao != 0 && painel.pontuacao % 100 == 0) {
+    for (let i in animacao.sprites) {
+      if (animacao.sprites[i] instanceof Ovni) {
+        if (animacao.sprites[i].imagem == imagens.ovni) {
+          animacao.sprites[i].imagem = imagens.ovni2;
+        } else if (animacao.sprites[i].imagem == imagens.ovni2) {
+          animacao.sprites[i].imagem = imagens.ovni3;
+        } else if (animacao.sprites[i].imagem == imagens.ovni3) {
+          animacao.sprites[i].imagem = imagens.ovni;
+        }
+      }
+    }
+  }
+}
+
 
 // Cria os inimigos a cada 1 segundo
 function criacaoInimigos() {
