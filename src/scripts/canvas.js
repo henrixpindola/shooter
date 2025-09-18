@@ -7,6 +7,10 @@ let imagens, animacao, teclado, colisor, nave, criadorInimigos;
 let totalImagens = 0, carregadas = 0;
 let musicaAcao;
 
+// Variáveis para mudança automática da imagem da nave
+let ultimaMudancaImagem = 0;
+let intervaloMudancaImagem = 30000; // 30 segundos inicialmente
+
 // Começa carregando as imagens
 carregarImagens();
 carregarMusicas();
@@ -44,6 +48,62 @@ function carregarMusicas() {
   musicaAcao.load();
   musicaAcao.volume = 0.5;
   musicaAcao.loop = true;
+}
+
+// Função para calcular o intervalo de mudança de imagem baseado no nível
+function calcularIntervaloMudancaImagem(nivel) {
+  if (nivel >= 1 && nivel <= 10) {
+    return 10000
+  } else if (nivel >= 11 && nivel <= 20) {
+    return 8000; 
+  } else if (nivel >= 21) {
+    return 5000; 
+  }
+  return 2000; 
+}
+
+// Função para mudar a imagem da nave automaticamente
+function mudarImagemNaveAutomaticamente() {
+  if (!nave || !nave.imagensFormatos) {
+    console.log("Nave ou imagensFormatos não disponível");
+    return;
+  }
+  
+  // Calcular novo intervalo baseado no nível atual
+  intervaloMudancaImagem = calcularIntervaloMudancaImagem(nave.nivel);
+  
+  let agora = new Date().getTime();
+  let decorrido = agora - ultimaMudancaImagem;
+  
+  if (decorrido >= intervaloMudancaImagem) {
+    // Escolher uma imagem aleatória entre as 4 disponíveis
+    let formatoAleatorio = Math.floor(Math.random() * 4); // 0, 1, 2 ou 3
+    
+    // Aplicar a mudança de formato
+    nave.formatoAtual = formatoAleatorio;
+    
+    switch (formatoAleatorio) {
+      case 0:
+        nave.imagem = nave.imagensFormatos.quadrado;
+        break;
+      case 1:
+        nave.imagem = nave.imagensFormatos.triangulo;
+        break;
+      case 2:
+        nave.imagem = nave.imagensFormatos.circulo;
+        break;
+      case 3:
+        nave.imagem = nave.imagensFormatos.losango;
+        break;
+    }
+    
+    nave.largura = nave.imagem.width;
+    nave.altura = nave.imagem.height;
+    
+    nave.spritesheet.imagem = nave.imagem;
+    
+    ultimaMudancaImagem = agora;
+  }
 }
 
 // Função que mostra o progresso do carregamento
@@ -93,6 +153,12 @@ function iniciarObjetos() {
   colisor.novoSprite(nave);
   animacao.novoProcessamento(colisor);
 
+  animacao.novoProcessamento({
+    processar: function() {
+      mudarImagemNaveAutomaticamente();
+    }
+  });
+
   configuracoesIniciais();
 }
 
@@ -116,49 +182,17 @@ function configuracoesIniciais() {
     circulo: imagens.circulo,
     losango: imagens.losango
   };
+  
+  // Definir a imagem inicial da nave
+  nave.imagem = nave.imagensFormatos.quadrado;
+  nave.largura = nave.imagem.width;
+  nave.altura = nave.imagem.height;
+  
+  // Log para debug
+  console.log("🚀 Nave inicializada com imagem:", nave.imagem.src);
+  console.log("📋 Imagens disponíveis:", nave.imagensFormatos);
 
-  // Definir método modificarFormato na nave
-  nave.modificarFormato = function () {
-    try {
-      // Frequência de aleatoriedade do formato da nave, baseado no nível
-      let chance = Math.min(30 + (this.nivel - 1) * 10, 80);
-      let rand = Math.random() * 100;
-
-      if (rand < chance) {
-        // Formato maior (triangulo, circulo, losango)
-        this.formatoAtual = Math.floor(1 + Math.random() * 3); // 1, 2 ou 3
-      } else {
-        // Formato menor (quadrado)
-        this.formatoAtual = 0;
-      }
-
-      // Modificador do formato da nave
-      switch (this.formatoAtual) {
-        case 0:
-          this.imagem = this.imagensFormatos.quadrado;
-          break;
-        case 1:
-          this.imagem = this.imagensFormatos.triangulo;
-          break;
-        case 2:
-          this.imagem = this.imagensFormatos.circulo;
-          break;
-        case 3:
-          this.imagem = this.imagensFormatos.losango;
-          break;
-      }
-
-      // Ajustar largura e altura conforme a nova imagem
-      this.largura = this.imagem.width;
-      this.altura = this.imagem.height;
-
-      console.log("Nave modificada para formato:", this.formatoAtual, "no nível:", this.nivel);
-    } catch (error) {
-      console.error("Erro ao modificar formato da nave:", error);
-      // Em caso de erro, mantém a imagem original da nave
-      this.imagem = imagens.nave;
-    }
-  };
+  // Sistema de mudança automática de imagem implementado acima
 
   // Inimigos
   criacaoInimigos();
@@ -251,6 +285,8 @@ function pausarJogo() {
   }
   else {
     criadorInimigos.ultimoOvni = new Date().getTime();
+    // Reinicializar tempo da última mudança de imagem ao despausar
+    ultimaMudancaImagem = new Date().getTime();
     animacao.ligar();
     musicaAcao.play();
     ativarTiro(true);
@@ -276,6 +312,8 @@ function mostrarLinkJogar() {
 // Inicia jogo
 function iniciarJogo() {
   criadorInimigos.ultimoOvni = new Date().getTime();
+  // Inicializar tempo da última mudança de imagem
+  ultimaMudancaImagem = new Date().getTime();
   // Tiro
   ativarTiro(true);
   // Pausa
