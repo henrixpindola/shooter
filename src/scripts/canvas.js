@@ -17,7 +17,7 @@ function carregarImagens() {
     espaco: "fundo-espaco.png",
     estrelas: "fundo-estrelas.png",
     nuvens: "fundo-nuvens.png",
-    nave: "nave-spritesheet.png",
+    nave: "1quadrado.png",
     ovni: "ovni.png",
     explosao: "explosao.png",
     // NOVAS IMAGENS DE FORMATO
