@@ -17,9 +17,14 @@ function carregarImagens() {
     espaco: "fundo-espaco.png",
     estrelas: "fundo-estrelas.png",
     nuvens: "fundo-nuvens.png",
-    nave: "nave-spritesheet.png",
+    nave: "1quadrado.png",
     ovni: "ovni.png",
-    explosao: "explosao.png"
+    explosao: "explosao.png",
+    // NOVAS IMAGENS DE FORMATO
+    quadrado: "1quadrado.png",
+    triangulo: "2triangulo.png",
+    circulo: "3circulo.png",
+    losango: "4losango.png"
   };
   // Carregar todas
   for (let i in imagens) {
@@ -39,13 +44,7 @@ function carregarMusicas() {
   musicaAcao.load();
   musicaAcao.volume = 0.5;
   musicaAcao.loop = true;
-  // Não vai começar automaticamente
-  //musicaAcao.play();
 }
-
-// CARREGAMENTO E INICIALIZAÇAO
-// let carregadas = 0;
-// let total = 5;
 
 // Função que mostra o progresso do carregamento
 function carregando() {
@@ -95,23 +94,71 @@ function iniciarObjetos() {
   animacao.novoProcessamento(colisor);
 
   configuracoesIniciais();
-
 }
+
 // Velocidades, posições iniciais, controles, etc
 function configuracoesIniciais() {
   // Fundos
-  espaco.velocidade = 60;
-  estrelas.velocidade = 150;
-  nuvens.velocidade = 500;
+  espaco.velocidade = 70;
+  estrelas.velocidade = 160;
+  nuvens.velocidade = 510;
+
   // Nave
   nave.posicionar();
-  nave.velocidade = 200;
-  // Tiro
-  //ativarTiro(true);
-  // Pausa
-  //teclado.disparou(ENTER, pausarJogo);
-  // O jogo não vai começar automaticamente
-  //animacao.ligar();
+  nave.velocidade = 210;
+
+  // Inicializar propriedades de formato da nave
+  nave.formatoAtual = 0;
+  nave.nivel = 1;
+  nave.imagensFormatos = {
+    quadrado: imagens.quadrado,
+    triangulo: imagens.triangulo,
+    circulo: imagens.circulo,
+    losango: imagens.losango
+  };
+
+  // Definir método modificarFormato na nave
+  nave.modificarFormato = function () {
+    try {
+      // Frequência de aleatoriedade do formato da nave, baseado no nível
+      let chance = Math.min(30 + (this.nivel - 1) * 10, 80);
+      let rand = Math.random() * 100;
+
+      if (rand < chance) {
+        // Formato maior (triangulo, circulo, losango)
+        this.formatoAtual = Math.floor(1 + Math.random() * 3); // 1, 2 ou 3
+      } else {
+        // Formato menor (quadrado)
+        this.formatoAtual = 0;
+      }
+
+      // Modificador do formato da nave
+      switch (this.formatoAtual) {
+        case 0:
+          this.imagem = this.imagensFormatos.quadrado;
+          break;
+        case 1:
+          this.imagem = this.imagensFormatos.triangulo;
+          break;
+        case 2:
+          this.imagem = this.imagensFormatos.circulo;
+          break;
+        case 3:
+          this.imagem = this.imagensFormatos.losango;
+          break;
+      }
+
+      // Ajustar largura e altura conforme a nova imagem
+      this.largura = this.imagem.width;
+      this.altura = this.imagem.height;
+
+      console.log("Nave modificada para formato:", this.formatoAtual, "no nível:", this.nivel);
+    } catch (error) {
+      console.error("Erro ao modificar formato da nave:", error);
+      // Em caso de erro, mantém a imagem original da nave
+      this.imagem = imagens.nave;
+    }
+  };
 
   // Inimigos
   criacaoInimigos();
@@ -122,14 +169,37 @@ function configuracoesIniciais() {
     gameOver();
   }
 
-  // Pontuação
+  // Pontuação - CORRIGIDO: removida chamada problemática
   colisor.aoColidir = function (o1, o2) {
-    if ((o1 instanceof Tiro && o2 instanceof Ovni) || (o1 instanceof Ovni && o2 instanceof Tiro))
-      // Incrementando os pontos
-      // Cada Ovni vale 10 pontos
+    if ((o1 instanceof Tiro && o2 instanceof Ovni) ||
+      (o1 instanceof Ovni && o2 instanceof Tiro)) {
+
       painel.pontuacao += 10;
+
+      // Apenas atualiza o nível - SEM modificar formato para evitar travamento
+      let novoNivel = Math.floor(painel.pontuacao / 20) + 1;
+      if (novoNivel > nave.nivel) {
+        nave.nivel = novoNivel;
+
+        // Aumentar velocidades gradualmente
+        espaco.velocidade += 5;
+        estrelas.velocidade += 8;
+        nuvens.velocidade += 12;
+
+        // Aumentar a velocidade dos inimigos existentes
+        for (let i = 0; i < animacao.sprites.length; i++) {
+          if (animacao.sprites[i] instanceof Ovni) {
+            animacao.sprites[i].velocidade += 20;
+          }
+        }
+
+        console.log("Subiu para nível:", nave.nivel);
+      }
+    }
   }
 
+  // Processamento para subir de nível - REMOVIDO para evitar duplicação
+  // A lógica de subir de nível já está sendo tratada no colisor
 }
 
 // Cria os inimigos a cada 1 segundo
@@ -215,8 +285,6 @@ function iniciarJogo() {
 
   musicaAcao.play();
   animacao.ligar();
-  // Pontuação
-  //painel.pontuacao = 0;
 }
 
 function gameOver() {
@@ -241,10 +309,19 @@ function gameOver() {
   // Restaurar as condições da nave
   nave.vidasExtras = 3;
   painel.pontuacao = 0;
+  nave.nivel = 1;
+  nave.formatoAtual = 0;
+  nave.imagem = imagens.nave; // Voltar para imagem original
+  nave.largura = nave.imagem.width;
+  nave.altura = nave.imagem.height;
   nave.posicionar();
   animacao.novoSprite(nave);
   colisor.novoSprite(nave);
-  // Tirar todos os inimifos da tela
+  // Restaurar velocidades dos fundos
+  espaco.velocidade = 70;
+  estrelas.velocidade = 160;
+  nuvens.velocidade = 510;
+  // Tirar todos os inimigos da tela
   removerInimigos();
 }
 

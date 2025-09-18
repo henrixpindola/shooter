@@ -1,29 +1,15 @@
+/* Variáveis globais */
 :root {
   --bg: #0f172a;
   --fg: #e2e8f0;
   --accent: #38bdf8;
 }
 
-.playbtn {
-  /* Inicia oculto */
-  display: none;
-  /* Cores e fundo */
-  color: rgb(255, 149, 0);
-  background: url("../assets/img/botao-jogar.png");
-  /* Fonte */
-  font-size: 20px;
-  font-family: sans-serif;
-  /* Sem sublinhado e com sombra */
-  text-decoration: none;
-  text-shadow: 2px 2px 5px black;
-  /* Posicionamento */
-  position: absolute;
-  left: 680px;
-  top: 450px;
-  /* A imagem do botão é 72x72, descontamos os paddings */
-  width: 52px;
-  height: 26px;
-  padding: 23px 10px;                             
+/* Reset e estilos base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html, body {
@@ -35,20 +21,161 @@ body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   background: var(--bg);
   color: var(--fg);
-  display: grid;
-  place-items: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-#app {
-  font-size: 1.25rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid rgba(226, 232, 240, 0.1);
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+/* Container principal */
+.container {
+  background: rgba(15,23,42,0.92);
+  border-radius: 14px;
+  padding: 0.2rem;
+  margin: 4rem auto;
+  width: 100%;
+  max-width: 650px;
+  text-align: center;
+  border: 1px solid rgba(226,232,240,0.1);
+position: absolute;
 }
 
+/* Títulos e textos */
+h1, h2 {
+  color: var(--accent);
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+  margin-top: 2rem;
+}
+
+p, ul {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+/* Links */
 a {
   color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #60a5fa;
+}
+
+/* Formulário na página de contato */
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.8rem;
+  background: rgba(15,23,42,0.95);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: var(--fg);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #60a5fa;
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background: #60a5fa;
+}
+
+/* Botão de jogar */
+.playbtn {
+  /* Inicia oculto */
+  display: none;
+  /* Cores e fundo */
+  color: rgb(255, 149, 0);
+  background: url("../assets/img/botao-jogar.png") no-repeat center;
+  /* Fonte */
+  font-size: 20px;
+  font-family: sans-serif;
+  /* Sem sublinhado e com sombra */
+  text-decoration: none;
+  text-shadow: 2px 2px 5px black;
+  /* Posicionamento */
+  position: absolute;
+  left: 50%;
+  top: 70%;
+  transform: translateX(-50%);
+  /* Dimensões do botão */
+  width: 72px;
+  height: 72px;
+  /* Centraliza o texto */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Efeitos */
+  transition: transform 0.2s;
+}
+
+.playbtn:hover {
+  transform: translateX(-50%) scale(1.1);
+  filter: brightness(1.2);
+}
+
+/* Animações */
+@keyframes flutuar {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-30px) scale(1.08); }
+}
+
+.sobre-anim {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.sobre-anim img {
+  width: auto;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(56,189,248,0.6));
+  animation: flutuar 2s ease-in-out infinite alternate;
+}
+
+.sobre-anim img:nth-child(2) {
+  animation-delay: 0.7s;
+}
+
+.sobre-anim img:nth-child(3) {
+  animation-delay: 1.4s;
 }
 
 
