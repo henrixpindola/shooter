@@ -7,10 +7,6 @@ let imagens, animacao, teclado, colisor, nave, criadorInimigos;
 let totalImagens = 0, carregadas = 0;
 let musicaAcao;
 
-// Variáveis para mudança automática da imagem da nave
-let ultimaMudancaImagem = 0;
-let intervaloMudancaImagem = 30000; // 30 segundos inicialmente
-
 // Começa carregando as imagens
 carregarImagens();
 carregarMusicas();
@@ -24,11 +20,7 @@ function carregarImagens() {
     nave: "1quadrado.png",
     ovni: "ovni.png",
     explosao: "explosao.png",
-    // NOVAS IMAGENS DE FORMATO
-    quadrado: "1quadrado.png",
-    triangulo: "2triangulo.png",
-    circulo: "3circulo.png",
-    losango: "4losango.png"
+
   };
   // Carregar todas
   for (let i in imagens) {
@@ -46,64 +38,13 @@ function carregarMusicas() {
   musicaAcao = new Audio();
   musicaAcao.src = "assets/sounds/musica-acao.mp3";
   musicaAcao.load();
+  //agora terá controle de volume e desativação de som
   musicaAcao.volume = 0.5;
+  musicaAcao.muted = false;
   musicaAcao.loop = true;
-}
+  //musicaAcao.play();
+  controlarVolume();
 
-// Função para calcular o intervalo de mudança de imagem baseado no nível
-function calcularIntervaloMudancaImagem(nivel) {
-  if (nivel >= 1 && nivel <= 10) {
-    return 10000
-  } else if (nivel >= 11 && nivel <= 20) {
-    return 8000; 
-  } else if (nivel >= 21) {
-    return 5000; 
-  }
-  return 2000; 
-}
-
-// Função para mudar a imagem da nave automaticamente
-function mudarImagemNaveAutomaticamente() {
-  if (!nave || !nave.imagensFormatos) {
-    console.log("Nave ou imagensFormatos não disponível");
-    return;
-  }
-  
-  // Calcular novo intervalo baseado no nível atual
-  intervaloMudancaImagem = calcularIntervaloMudancaImagem(nave.nivel);
-  
-  let agora = new Date().getTime();
-  let decorrido = agora - ultimaMudancaImagem;
-  
-  if (decorrido >= intervaloMudancaImagem) {
-    // Escolher uma imagem aleatória entre as 4 disponíveis
-    let formatoAleatorio = Math.floor(Math.random() * 4); // 0, 1, 2 ou 3
-    
-    // Aplicar a mudança de formato
-    nave.formatoAtual = formatoAleatorio;
-    
-    switch (formatoAleatorio) {
-      case 0:
-        nave.imagem = nave.imagensFormatos.quadrado;
-        break;
-      case 1:
-        nave.imagem = nave.imagensFormatos.triangulo;
-        break;
-      case 2:
-        nave.imagem = nave.imagensFormatos.circulo;
-        break;
-      case 3:
-        nave.imagem = nave.imagensFormatos.losango;
-        break;
-    }
-    
-    nave.largura = nave.imagem.width;
-    nave.altura = nave.imagem.height;
-    
-    nave.spritesheet.imagem = nave.imagem;
-    
-    ultimaMudancaImagem = agora;
-  }
 }
 
 // Função que mostra o progresso do carregamento
@@ -128,6 +69,7 @@ function carregando() {
   if (carregadas == totalImagens) {
     iniciarObjetos();
     mostrarLinkJogar();
+    mostrarLinkVolume();
   }
 }
 
@@ -153,12 +95,6 @@ function iniciarObjetos() {
   colisor.novoSprite(nave);
   animacao.novoProcessamento(colisor);
 
-  animacao.novoProcessamento({
-    processar: function() {
-      mudarImagemNaveAutomaticamente();
-    }
-  });
-
   configuracoesIniciais();
 }
 
@@ -173,27 +109,6 @@ function configuracoesIniciais() {
   nave.posicionar();
   nave.velocidade = 210;
 
-  // Inicializar propriedades de formato da nave
-  nave.formatoAtual = 0;
-  nave.nivel = 1;
-  nave.imagensFormatos = {
-    quadrado: imagens.quadrado,
-    triangulo: imagens.triangulo,
-    circulo: imagens.circulo,
-    losango: imagens.losango
-  };
-  
-  // Definir a imagem inicial da nave
-  nave.imagem = nave.imagensFormatos.quadrado;
-  nave.largura = nave.imagem.width;
-  nave.altura = nave.imagem.height;
-  
-  // Log para debug
-  console.log("🚀 Nave inicializada com imagem:", nave.imagem.src);
-  console.log("📋 Imagens disponíveis:", nave.imagensFormatos);
-
-  // Sistema de mudança automática de imagem implementado acima
-
   // Inimigos
   criacaoInimigos();
 
@@ -203,7 +118,7 @@ function configuracoesIniciais() {
     gameOver();
   }
 
-  // Pontuação - CORRIGIDO: removida chamada problemática
+  // Pontuação - MODIFICADO PARA SUBIR DE NÍVEL
   colisor.aoColidir = function (o1, o2) {
     if ((o1 instanceof Tiro && o2 instanceof Ovni) ||
       (o1 instanceof Ovni && o2 instanceof Tiro)) {
@@ -232,8 +147,6 @@ function configuracoesIniciais() {
     }
   }
 
-  // Processamento para subir de nível - REMOVIDO para evitar duplicação
-  // A lógica de subir de nível já está sendo tratada no colisor
 }
 
 // Cria os inimigos a cada 1 segundo
@@ -285,8 +198,6 @@ function pausarJogo() {
   }
   else {
     criadorInimigos.ultimoOvni = new Date().getTime();
-    // Reinicializar tempo da última mudança de imagem ao despausar
-    ultimaMudancaImagem = new Date().getTime();
     animacao.ligar();
     musicaAcao.play();
     ativarTiro(true);
@@ -309,17 +220,36 @@ function mostrarLinkJogar() {
   document.getElementById('link_jogar').style.display = "block";
 }
 
+// Mostra botão de ajustar volume
+function mostrarLinkVolume() {
+  document.getElementById('link_volume').style.display = "block";
+}
+
+// Controla volume
+function controlarVolume() {
+  musicaAcao.volume = 0.5;
+  document.getElementById('link_volume').onclick = function () {
+    if (musicaAcao.muted) {
+      musicaAcao.muted = false;
+      document.getElementById('link_volume').innerText = "Áudio ligado";
+    }
+    else {
+      musicaAcao.muted = true;
+      document.getElementById('link_volume').innerText = "Áudio desligado";
+    }
+  }
+}
+
 // Inicia jogo
 function iniciarJogo() {
   criadorInimigos.ultimoOvni = new Date().getTime();
-  // Inicializar tempo da última mudança de imagem
-  ultimaMudancaImagem = new Date().getTime();
   // Tiro
   ativarTiro(true);
   // Pausa
   teclado.disparou(ENTER, pausarJogo);
 
   document.getElementById('link_jogar').style.display = "none";
+  document.getElementById('link_volume').style.display
 
   musicaAcao.play();
   animacao.ligar();

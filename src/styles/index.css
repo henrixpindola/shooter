@@ -121,7 +121,6 @@ button:hover {
   display: none;
   /* Cores e fundo */
   color: rgb(255, 149, 0);
-  background: url("../assets/img/botao-jogar.png") no-repeat center;
   /* Fonte */
   font-size: 20px;
   font-family: sans-serif;
@@ -149,7 +148,43 @@ button:hover {
   filter: brightness(1.2);
 }
 
-/* Animações */
+/* Botão de volume */
+.volumebtn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+  z-index: 999;
+}
+
+.volumebtn:hover {
+  transform: scale(1.1);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    padding: 2rem 1rem;
+  }
+}
+
+/* Animação de fade-in */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Animação de flutuar */
+@keyframes flutuar {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+
 @keyframes flutuar {
   0% { transform: translateY(0) scale(1); }
   100% { transform: translateY(-30px) scale(1.08); }
