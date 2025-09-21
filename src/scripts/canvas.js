@@ -42,9 +42,22 @@ function carregarMusicas() {
   musicaAcao.volume = 0.5;
   musicaAcao.muted = false;
   musicaAcao.loop = true;
-  //musicaAcao.play();
-  controlarVolume();
+    
+  // Atualizar a interface com o estado inicial do áudio
+  atualizarInterfaceAudio();
+}
 
+// Função para atualizar a interface do áudio
+function atualizarInterfaceAudio() {
+  const linkVolume = document.getElementById('link_volume');
+  
+  if (musicaAcao.muted) {
+    linkVolume.textContent = "Áudio desligado";
+    linkVolume.classList.add('muted');
+  } else {
+    linkVolume.textContent = "Áudio ligado";
+    linkVolume.classList.remove('muted');
+  }
 }
 
 // Função que mostra o progresso do carregamento
@@ -69,7 +82,6 @@ function carregando() {
   if (carregadas == totalImagens) {
     iniciarObjetos();
     mostrarLinkJogar();
-    mostrarLinkVolume();
   }
 }
 
@@ -220,24 +232,10 @@ function mostrarLinkJogar() {
   document.getElementById('link_jogar').style.display = "block";
 }
 
-// Mostra botão de ajustar volume
-function mostrarLinkVolume() {
-  document.getElementById('link_volume').style.display = "block";
-}
-
-// Controla volume
-function controlarVolume() {
-  musicaAcao.volume = 0.5;
-  document.getElementById('link_volume').onclick = function () {
-    if (musicaAcao.muted) {
-      musicaAcao.muted = false;
-      document.getElementById('link_volume').innerText = "Áudio ligado";
-    }
-    else {
-      musicaAcao.muted = true;
-      document.getElementById('link_volume').innerText = "Áudio desligado";
-    }
-  }
+// Função para alternar o estado do áudio
+        function toggleAudio() {
+        musicaAcao.muted = !musicaAcao.muted;
+        atualizarInterfaceAudio(); // Usar a função correta
 }
 
 // Inicia jogo
@@ -249,9 +247,14 @@ function iniciarJogo() {
   teclado.disparou(ENTER, pausarJogo);
 
   document.getElementById('link_jogar').style.display = "none";
-  document.getElementById('link_volume').style.display
 
   musicaAcao.play();
+  animacao.ligar();
+
+  // Iniciar música apenas se não estiver mudo
+  if (!musicaAcao.muted) {
+    musicaAcao.play();
+  }
   animacao.ligar();
 }
 
