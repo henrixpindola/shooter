@@ -1,3 +1,4 @@
+////1 - INICIALIZAÇÃO E CONFIGURAÇÕES BÁSICAS ////
 // Canvas e Context
 const canvas = document.getElementById('canvas_animacao');
 const context = canvas.getContext('2d');
@@ -7,6 +8,7 @@ let imagens, animacao, teclado, colisor, nave, criadorInimigos;
 let totalImagens = 0, carregadas = 0;
 let musicaAcao;
 
+////2 - CARREGAMENTO DE IMAGENS ////
 // Começa carregando as imagens
 carregarImagens();
 carregarMusicas();
@@ -34,6 +36,7 @@ function carregarImagens() {
   }
 }
 
+////2.1 - CARREGAMENTO DE MÚSICAS ////
 function carregarMusicas() {
   musicaAcao = new Audio();
   musicaAcao.src = "assets/sounds/musica-acao.mp3";
@@ -42,7 +45,7 @@ function carregarMusicas() {
   musicaAcao.volume = 0.5;
   musicaAcao.muted = false;
   musicaAcao.loop = true;
-    
+
   // Atualizar a interface com o estado inicial do áudio
   atualizarInterfaceAudio();
 }
@@ -50,7 +53,7 @@ function carregarMusicas() {
 // Função para atualizar a interface do áudio
 function atualizarInterfaceAudio() {
   const linkVolume = document.getElementById('link_volume');
-  
+
   if (musicaAcao.muted) {
     linkVolume.textContent = "Áudio desligado";
     linkVolume.classList.add('muted');
@@ -60,31 +63,26 @@ function atualizarInterfaceAudio() {
   }
 }
 
+////3 - TELA DE CARREGAMENTO ////
 // Função que mostra o progresso do carregamento
 function carregando() {
   context.save();
   // Background
   context.drawImage(imagens.espaco, 0, 0, canvas.width, canvas.height);
-  // Texto "Carregando"
+  // Texto inicial
   context.fillStyle = 'white';
   context.strokeStyle = 'black';
-  context.font = '50px sans-serif';
-  context.fillText("Carregando...", 100, 200);
-  // Barra de loading
+  context.font = '30px sans-serif';
+  context.fillText("Acabe com estes OVNIS!", 50, 100);  
   carregadas++;
-  let tamanhoTotal = 300;
-  let tamanho = carregadas / totalImagens * tamanhoTotal;
-  context.fillStyle = 'yellow';
-  context.fillRect(100, 250, tamanho, 50);
-
   context.restore();
-
   if (carregadas == totalImagens) {
     iniciarObjetos();
     mostrarLinkJogar();
   }
 }
 
+////4 - INICIALIZAÇÃO DOS OBJETOS DO JOGO ////
 // Função que inicia os objetos todos
 function iniciarObjetos() {
   // Objetos principais
@@ -110,6 +108,7 @@ function iniciarObjetos() {
   configuracoesIniciais();
 }
 
+////4.1 - CONFIGURAÇÕES INICIAIS ////
 // Velocidades, posições iniciais, controles, etc
 function configuracoesIniciais() {
   // Fundos
@@ -130,6 +129,7 @@ function configuracoesIniciais() {
     gameOver();
   }
 
+  ////5 - PONTUAÇÃO E COLISÕES ////
   // Pontuação - MODIFICADO PARA SUBIR DE NÍVEL
   colisor.aoColidir = function (o1, o2) {
     if ((o1 instanceof Tiro && o2 instanceof Ovni) ||
@@ -161,6 +161,7 @@ function configuracoesIniciais() {
 
 }
 
+////6 - INIMIGOS/OVNIS ////
 // Cria os inimigos a cada 1 segundo
 function criacaoInimigos() {
   criadorInimigos = {
@@ -193,7 +194,8 @@ function novoOvni() {
   animacao.novoSprite(ovni);
   colisor.novoSprite(ovni);
 }
-
+////7 - CONTROLES E INTERFACE ////
+////7.1 - TELA DE PAUSA ////
 // Pausa jogo
 function pausarJogo() {
   if (animacao.ligado) {
@@ -216,6 +218,7 @@ function pausarJogo() {
   }
 }
 
+////8 - TIROS ////
 // Atirar
 function ativarTiro(ativar) {
   if (ativar) {
@@ -227,15 +230,16 @@ function ativarTiro(ativar) {
     teclado.disparou(ESPACO, null);
 }
 
+////9 - INÍCIO E FIM DO JOGO ////
 // Mostra botão de início de jogo
 function mostrarLinkJogar() {
   document.getElementById('link_jogar').style.display = "block";
 }
 
 // Função para alternar o estado do áudio
-        function toggleAudio() {
-        musicaAcao.muted = !musicaAcao.muted;
-        atualizarInterfaceAudio(); // Usar a função correta
+function toggleAudio() {
+  musicaAcao.muted = !musicaAcao.muted;
+  atualizarInterfaceAudio(); // Usar a função correta
 }
 
 // Inicia jogo
