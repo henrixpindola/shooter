@@ -25,9 +25,18 @@
     <div class="canvas">
       <!-- AREA DO JOGO -->
       <canvas width="485" height="485" id="canvas_animacao"></canvas>
-      <a id="link_jogar" class="playbtn" href="javascript: iniciarJogo()">Jogar</a>
-      <a id="link_volume" class="btn volumebtn" href="javascript:toggleAudio()">Áudio ligado</a>  
-    </div>
+<!-- Container dos botões no canto superior esquerdo -->
+     <div class="controles">
+      <a id="link_volume" class="controle-btn" href="javascript:toggleAudio()">Áudio ligado</a>
+      <a id="link_pausar" class="controle-btn" href="javascript:pausarJogoBotao()" style="display:none;">Pausar</a>
+      <a id="link_sair" class="controle-btn" href="javascript:sairDoJogo()" style="display:none;">Sair</a>
+     </div>
+
+    <!-- Botão de jogar (centro da tela) -->
+    <a id="link_jogar" class="playbtn" href="javascript:iniciarJogo()" style="display:none;">Começar!</a>
+   
+  </div>
+    <!-- FIM DO CONTAINER DO JOGO -->
 
     <!-- SCRIPTS DO JOGO -->
     <script src="./src/scripts/animacao.js"></script>

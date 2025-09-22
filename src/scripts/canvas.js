@@ -79,8 +79,20 @@ function carregando() {
   if (carregadas == totalImagens) {
     iniciarObjetos();
     mostrarLinkJogar();
-  }
-}
+       // Botões aparecem quando o jogo termina de carregar
+       mostrarBotoesControle();
+      }
+    }
+    
+    function mostrarBotoesControle() {
+      document.getElementById('link_pausar').style.display = "block";
+      document.getElementById('link_sair').style.display = "block";
+    }
+    
+    function esconderBotoesControle() {
+      document.getElementById('link_pausar').style.display = "none";
+      document.getElementById('link_sair').style.display = "none";
+    }
 
 ////4 - INICIALIZAÇÃO DOS OBJETOS DO JOGO ////
 // Função que inicia os objetos todos
@@ -218,6 +230,30 @@ function pausarJogo() {
   }
 }
 
+function pausarJogoBotao() {
+  pausarJogo(); // Reutiliza a função existente
+  // Atualizar texto do botão
+  const botaoPausar = document.getElementById('link_pausar');
+  if (animacao.ligado) {
+    botaoPausar.textContent = "Pausar";
+  } else {
+    botaoPausar.textContent = "Continuar";
+  }
+}
+
+function sairDoJogo() {
+  // Parar animação e música
+  animacao.desligar();
+  musicaAcao.pause();
+  musicaAcao.currentTime = 0.0;
+  
+  // Resetar jogo (chama a função gameOver existente)
+  gameOver();
+  
+  // Esconder botões de controle
+  esconderBotoesControle();
+}
+
 ////8 - TIROS ////
 // Atirar
 function ativarTiro(ativar) {
@@ -281,6 +317,9 @@ function gameOver() {
   context.restore();
   // Voltar o link "Jogar"
   mostrarLinkJogar();
+  
+  // FALTANDO: Esconder botões de controle quando o jogo acaba
+  esconderBotoesControle();
   // Restaurar as condições da nave
   nave.vidasExtras = 3;
   painel.pontuacao = 0;
@@ -306,3 +345,4 @@ function removerInimigos() {
       animacao.excluirSprite(animacao.sprites[i]);
   }
 }
+

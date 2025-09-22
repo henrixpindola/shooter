@@ -25,6 +25,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative; /* Importante para o posicionamento absoluto dos botões */
 }
 
 /* Container principal */
@@ -37,7 +38,88 @@ body {
   max-width: 650px;
   text-align: center;
   border: 1px solid rgba(226,232,240,0.1);
-position: absolute;
+  position: absolute;
+}
+
+/* CONTAINER DOS BOTÕES DE CONTROLE - CANTO SUPERIOR ESQUERDO */
+.controles {
+  position: fixed; /* Mudei para fixed para ficar sempre visível */
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.8);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* ESTILO UNIFICADO PARA TODOS OS BOTÕES */
+.controle-btn {
+  padding: 12px 20px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 140px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.controle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.1);
+}
+
+.controle-btn:active {
+  transform: translateY(0);
+}
+
+/* BOTÃO DE VOLUME - SEMPRE VISÍVEL */
+#link_volume {
+  display: flex !important;
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+}
+
+#link_volume:hover {
+  background: linear-gradient(135deg, #60a5fa, #38bdf8);
+}
+
+/* BOTÃO DE PAUSAR/CONTINUAR */
+#link_pausar {
+  display: none;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+}
+
+#link_pausar:hover {
+  background: linear-gradient(135deg, #34d399, #10b981);
+}
+
+/* BOTÃO DE SAIR */
+#link_sair {
+  display: none;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+}
+
+#link_sair:hover {
+  background: linear-gradient(135deg, #f87171, #ef4444);
 }
 
 /* Títulos e textos */
@@ -117,59 +199,70 @@ button:hover {
 
 /* Botão de jogar */
 .playbtn {
-  /* Inicia oculto */
   display: none;
-  /* Cores e fundo */
   color: rgb(255, 149, 0);
-  /* Fonte */
   font-size: 20px;
   font-family: sans-serif;
-  /* Sem sublinhado e com sombra */
   text-decoration: none;
   text-shadow: 2px 2px 5px black;
-  /* Posicionamento */
   position: absolute;
   left: 50%;
   top: 70%;
   transform: translateX(-50%);
-  /* Dimensões do botão */
   width: 72px;
   height: 72px;
-  /* Centraliza o texto */
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Efeitos */
   transition: transform 0.2s;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 50%;
+  border: 2px solid rgba(245, 158, 11, 0.5);
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
 }
 
 .playbtn:hover {
   transform: translateX(-50%) scale(1.1);
   filter: brightness(1.2);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
 }
 
-/* Botão de volume */
+/* Remove estilos antigos do botão de volume */
 .volumebtn {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 40px;
-  height: 40px;
-  background-size: contain;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s;
-  z-index: 999;
-}
-
-.volumebtn:hover {
-  transform: scale(1.1);
+  all: unset; /* Remove todos os estilos antigos */
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
   .container {
     padding: 2rem 1rem;
+  }
+  
+  .controles {
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+  }
+  
+  .controle-btn {
+    width: 120px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .controles {
+    top: 5px;
+    left: 5px;
+    padding: 8px;
+  }
+  
+  .controle-btn {
+    width: 100px;
+    padding: 8px 12px;
+    font-size: 12px;
+    min-height: 40px;
   }
 }
 
@@ -180,11 +273,6 @@ button:hover {
 }
 
 /* Animação de flutuar */
-@keyframes flutuar {
-  from { transform: translateY(0); }
-  to { transform: translateY(-10px); }
-}
-
 @keyframes flutuar {
   0% { transform: translateY(0) scale(1); }
   100% { transform: translateY(-30px) scale(1.08); }
@@ -212,5 +300,3 @@ button:hover {
 .sobre-anim img:nth-child(3) {
   animation-delay: 1.4s;
 }
-
-
