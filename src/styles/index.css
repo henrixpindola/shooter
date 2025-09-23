@@ -1,11 +1,15 @@
-/* Variáveis globais */
+/* ===========================
+   VARIÁVEIS GLOBAIS
+=========================== */
 :root {
   --bg: #0f172a;
   --fg: #e2e8f0;
   --accent: #38bdf8;
 }
 
-/* Reset e estilos base */
+/* ===========================
+   RESET & BASE
+=========================== */
 * {
   margin: 0;
   padding: 0;
@@ -25,10 +29,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative; /* Importante para o posicionamento absoluto dos botões */
+  position: relative; /* necessário para posicionamento absoluto */
 }
 
-/* Container principal */
+/* ===========================
+   CONTAINER PRINCIPAL
+=========================== */
 .container {
   background: rgba(15,23,42,0.92);
   border-radius: 14px;
@@ -41,9 +47,11 @@ body {
   position: absolute;
 }
 
-/* CONTAINER DOS BOTÕES DE CONTROLE - CANTO SUPERIOR ESQUERDO */
+/* ===========================
+   CONTROLES (TOPO ESQUERDO)
+=========================== */
 .controles {
-  position: fixed; /* Mudei para fixed para ficar sempre visível */
+  position: fixed;
   top: 20px;
   left: 20px;
   display: flex;
@@ -57,7 +65,7 @@ body {
   backdrop-filter: blur(10px);
 }
 
-/* ESTILO UNIFICADO PARA TODOS OS BOTÕES */
+/* Botões - estilo unificado */
 .controle-btn {
   padding: 12px 20px;
   color: white;
@@ -89,44 +97,42 @@ body {
   transform: translateY(0);
 }
 
-/* BOTÃO DE VOLUME - SEMPRE VISÍVEL */
+/* Botão volume */
 #link_volume {
   display: flex !important;
   background: linear-gradient(135deg, #38bdf8, #0ea5e9);
   border: 1px solid rgba(56, 189, 248, 0.5);
 }
-
 #link_volume:hover {
   background: linear-gradient(135deg, #60a5fa, #38bdf8);
 }
 
-/* BOTÃO DE PAUSAR/CONTINUAR */
+/* Botão pausar */
 #link_pausar {
   background: linear-gradient(135deg, #10b981, #059669);
   border: 1px solid rgba(16, 185, 129, 0.5);
 }
-
 #link_pausar:hover {
   background: linear-gradient(135deg, #34d399, #10b981);
 }
 
-/* BOTÃO DE SAIR */
+/* Botão sair */
 #link_sair {
   background: linear-gradient(135deg, #ef4444, #dc2626);
   border: 1px solid rgba(239, 68, 68, 0.5);
 }
-
 #link_sair:hover {
   background: linear-gradient(135deg, #f87171, #ef4444);
 }
 
-/* Títulos e textos */
+/* ===========================
+   TEXTOS E LINKS
+=========================== */
 h1, h2 {
   color: var(--accent);
   margin-bottom: 1rem;
   font-size: 1.8rem;
 }
-
 h2 {
   font-size: 1.4rem;
   margin-top: 2rem;
@@ -137,30 +143,28 @@ p, ul {
   line-height: 1.6;
 }
 
-/* Links */
 a {
   color: var(--accent);
   text-decoration: none;
   transition: color 0.2s;
 }
-
 a:hover {
   color: #60a5fa;
 }
 
-/* Formulário na página de contato */
+/* ===========================
+   FORMULÁRIOS
+=========================== */
 .form-group {
   margin-bottom: 1.5rem;
   text-align: left;
 }
-
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   color: var(--accent);
   font-weight: 500;
 }
-
 .form-group input,
 .form-group textarea {
   width: 100%;
@@ -172,7 +176,6 @@ a:hover {
   font-size: 1rem;
   transition: border-color 0.2s;
 }
-
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
@@ -190,18 +193,18 @@ button {
   cursor: pointer;
   transition: background-color 0.2s;
 }
-
 button:hover {
   background: #60a5fa;
 }
 
-/* Botão de jogar */
+/* ===========================
+   BOTÃO JOGAR
+=========================== */
 .playbtn {
   display: none;
   color: rgb(255, 149, 0);
   font-size: 20px;
   font-family: sans-serif;
-  text-decoration: none;
   text-shadow: 2px 2px 5px black;
   position: absolute;
   left: 50%;
@@ -218,30 +221,31 @@ button:hover {
   border: 2px solid rgba(245, 158, 11, 0.5);
   box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
 }
-
 .playbtn:hover {
   transform: translateX(-50%) scale(1.1);
   filter: brightness(1.2);
   box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
 }
 
-/* Remove estilos antigos do botão de volume */
+/* ===========================
+   AJUSTES GERAIS
+=========================== */
 .volumebtn {
-  all: unset; /* Remove todos os estilos antigos */
+  all: unset; /* reset para evitar conflito */
 }
 
-/* Responsividade */
+/* ===========================
+   RESPONSIVIDADE
+=========================== */
 @media (max-width: 768px) {
   .container {
     padding: 2rem 1rem;
   }
-  
   .controles {
     top: 10px;
     left: 10px;
     padding: 10px;
   }
-  
   .controle-btn {
     width: 120px;
     padding: 10px 16px;
@@ -255,7 +259,6 @@ button:hover {
     left: 5px;
     padding: 8px;
   }
-  
   .controle-btn {
     width: 100px;
     padding: 8px 12px;
@@ -264,13 +267,14 @@ button:hover {
   }
 }
 
-/* Animação de fade-in */
+/* ===========================
+   ANIMAÇÕES
+=========================== */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-/* Animação de flutuar */
 @keyframes flutuar {
   0% { transform: translateY(0) scale(1); }
   100% { transform: translateY(-30px) scale(1.08); }
@@ -282,7 +286,6 @@ button:hover {
   gap: 2rem;
   margin: 2rem 0;
 }
-
 .sobre-anim img {
   width: auto;
   height: 48px;
@@ -290,11 +293,5 @@ button:hover {
   filter: drop-shadow(0 0 12px rgba(56,189,248,0.6));
   animation: flutuar 2s ease-in-out infinite alternate;
 }
-
-.sobre-anim img:nth-child(2) {
-  animation-delay: 0.7s;
-}
-
-.sobre-anim img:nth-child(3) {
-  animation-delay: 1.4s;
-}
+.sobre-anim img:nth-child(2) { animation-delay: 0.7s; }
+.sobre-anim img:nth-child(3) { animation-delay: 1.4s; }

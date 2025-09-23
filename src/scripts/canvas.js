@@ -1,5 +1,7 @@
-////1 - INICIALIZAÇÃO E CONFIGURAÇÕES BÁSICAS ////
-// Canvas e Context
+/* ============================================================
+   1 - CONFIGURAÇÃO INICIAL
+============================================================ */
+// Canvas e contexto do jogo
 const canvas = document.getElementById('canvas_animacao');
 const context = canvas.getContext('2d');
 
@@ -8,13 +10,16 @@ let imagens, animacao, teclado, colisor, nave, criadorInimigos;
 let totalImagens = 0, carregadas = 0;
 let musicaAcao;
 
-////2 - CARREGAMENTO DE IMAGENS ////
-// Começa carregando as imagens
+
+/* ============================================================
+   2 - CARREGAMENTO DE RECURSOS
+============================================================ */
+// Inicia carregamento de imagens e músicas
 carregarImagens();
 carregarMusicas();
 
+// Carregar imagens do jogo
 function carregarImagens() {
-  // Objeto contendo os nomes das imagens
   imagens = {
     espaco: "fundo-espaco.png",
     estrelas: "fundo-estrelas.png",
@@ -22,35 +27,30 @@ function carregarImagens() {
     nave: "1quadrado.png",
     ovni: "ovni.png",
     explosao: "explosao.png",
-
   };
-  // Carregar todas
+
   for (let i in imagens) {
     let img = new Image();
     img.src = "assets/img/" + imagens[i];
     img.onload = carregando;
     totalImagens++;
-
-    // Substituir o nome pela imagem
-    imagens[i] = img;
+    imagens[i] = img; // Troca string pela imagem carregada
   }
 }
 
-////2.1 - CARREGAMENTO DE MÚSICAS ////
+// Carregar música de fundo
 function carregarMusicas() {
   musicaAcao = new Audio();
   musicaAcao.src = "assets/sounds/musica-acao.mp3";
   musicaAcao.load();
-  //agora terá controle de volume e desativação de som
   musicaAcao.volume = 0.5;
   musicaAcao.muted = false;
   musicaAcao.loop = true;
 
-  // Atualizar a interface com o estado inicial do áudio
   atualizarInterfaceAudio();
 }
 
-// Função para atualizar a interface do áudio
+// Atualiza o estado do botão de áudio
 function atualizarInterfaceAudio() {
   const linkVolume = document.getElementById('link_volume');
 
@@ -63,55 +63,62 @@ function atualizarInterfaceAudio() {
   }
 }
 
-////3 - TELA DE CARREGAMENTO ////
-// Função que mostra o progresso do carregamento
+
+/* ============================================================
+   3 - TELA DE LOADING
+============================================================ */
 function carregando() {
   context.save();
-  // Background
   context.drawImage(imagens.espaco, 0, 0, canvas.width, canvas.height);
-  // Texto inicial
   context.fillStyle = 'white';
   context.strokeStyle = 'black';
   context.font = '30px sans-serif';
-  context.fillText("Acabe com estes OVNIS!", 50, 100);  
+  context.fillText("Acabe com estes OVNIS!", 50, 100);
   carregadas++;
   context.restore();
+
   if (carregadas == totalImagens) {
     iniciarObjetos();
     mostrarLinkJogar();
-      }
-    }
-    
-////4 - INICIALIZAÇÃO DOS OBJETOS DO JOGO ////
-// Função que inicia os objetos todos
+  }
+}
+
+
+/* ============================================================
+   4 - OBJETOS DO JOGO
+============================================================ */
 function iniciarObjetos() {
-  // Objetos principais
+  // Núcleo do jogo
   animacao = new Animacao(context);
   teclado = new Teclado(document);
   colisor = new Colisor();
+
+  // Fundos
   espaco = new Fundo(context, imagens.espaco);
   estrelas = new Fundo(context, imagens.estrelas);
   nuvens = new Fundo(context, imagens.nuvens);
+
+  // Player e HUD
   nave = new Nave(context, teclado, imagens.nave, imagens.explosao);
   painel = new Painel(context, nave);
 
-  // Ligações entre objetos
+  // Adiciona sprites na animação
   animacao.novoSprite(espaco);
   animacao.novoSprite(estrelas);
   animacao.novoSprite(nuvens);
   animacao.novoSprite(painel);
   animacao.novoSprite(nave);
 
+  // Colisões
   colisor.novoSprite(nave);
   animacao.novoProcessamento(colisor);
 
   configuracoesIniciais();
 }
 
-////4.1 - CONFIGURAÇÕES INICIAIS ////
-// Velocidades, posições iniciais, controles, etc
+// Configurações padrão do jogo
 function configuracoesIniciais() {
-  // Fundos
+  // Velocidade dos fundos
   espaco.velocidade = 70;
   estrelas.velocidade = 160;
   nuvens.velocidade = 510;
@@ -123,31 +130,33 @@ function configuracoesIniciais() {
   // Inimigos
   criacaoInimigos();
 
-  // Game Over
+  // Game Over ao perder todas vidas
   nave.acabaramVidas = function () {
     animacao.desligar();
     gameOver();
-  }
+  };
 
-  ////5 - PONTUAÇÃO E COLISÕES ////
-  // Pontuação - MODIFICADO PARA SUBIR DE NÍVEL
+  /* ============================================================
+     5 - PONTUAÇÃO E COLISÕES
+  ============================================================ */
+  // Pontuação e progressão de nível
   colisor.aoColidir = function (o1, o2) {
     if ((o1 instanceof Tiro && o2 instanceof Ovni) ||
-      (o1 instanceof Ovni && o2 instanceof Tiro)) {
+        (o1 instanceof Ovni && o2 instanceof Tiro)) {
 
       painel.pontuacao += 10;
 
-      // Apenas atualiza o nível - SEM modificar formato para evitar travamento
+      // Calcula nível atual
       let novoNivel = Math.floor(painel.pontuacao / 20) + 1;
       if (novoNivel > nave.nivel) {
         nave.nivel = novoNivel;
 
-        // Aumentar velocidades gradualmente
+        // Aumenta velocidades
         espaco.velocidade += 5;
         estrelas.velocidade += 8;
         nuvens.velocidade += 12;
 
-        // Aumentar a velocidade dos inimigos existentes
+        // Acelera inimigos já em tela
         for (let i = 0; i < animacao.sprites.length; i++) {
           if (animacao.sprites[i] instanceof Ovni) {
             animacao.sprites[i].velocidade += 20;
@@ -157,12 +166,14 @@ function configuracoesIniciais() {
         console.log("Subiu para nível:", nave.nivel);
       }
     }
-  }
-
+  };
 }
 
-////6 - INIMIGOS/OVNIS ////
-// Cria os inimigos a cada 1 segundo
+
+/* ============================================================
+   6 - INIMIGOS (OVNIS)
+============================================================ */
+// Geração contínua de inimigos
 function criacaoInimigos() {
   criadorInimigos = {
     ultimoOvni: new Date().getTime(),
@@ -180,37 +191,37 @@ function criacaoInimigos() {
   animacao.novoProcessamento(criadorInimigos);
 }
 
-// Implementa um novo inimigo
+// Criar inimigo
 function novoOvni() {
   let imgOvni = imagens.ovni;
   let ovni = new Ovni(context, imgOvni, imagens.explosao);
-  // Mínimo: 500; máximo: 1000
+
   ovni.velocidade = Math.floor(500 + Math.random() * (1000 - 500 + 1));
-  // Mínimo: 0; máximo: largura do canvas - largura do ovni
   ovni.x = Math.floor(Math.random() * (canvas.width - imgOvni.width + 1));
-  // Descontar a altura
   ovni.y = -imgOvni.height;
 
   animacao.novoSprite(ovni);
   colisor.novoSprite(ovni);
 }
-////7 - CONTROLES E INTERFACE ////
-////7.1 - TELA DE PAUSA ////
-// Pausa jogo
+
+
+/* ============================================================
+   7 - CONTROLES E INTERFACE
+============================================================ */
+// Pausar ou retomar jogo
 function pausarJogo() {
   if (animacao.ligado) {
     animacao.desligar();
     musicaAcao.pause();
     ativarTiro(false);
-    // Escrever PAUSADO
+
     context.save();
     context.fillStyle = "white";
     context.strokeStyle = "black";
     context.font = "50px sans-serif";
     context.fillText("PAUSADO", 130, 250);
     context.restore();
-  }
-  else {
+  } else {
     criadorInimigos.ultimoOvni = new Date().getTime();
     animacao.ligar();
     musicaAcao.play();
@@ -218,116 +229,110 @@ function pausarJogo() {
   }
 }
 
+// Alternar texto do botão Pausar
 function pausarJogoBotao() {
-  pausarJogo(); // Reutiliza a função existente
-  // Atualizar texto do botão
+  pausarJogo();
   const botaoPausar = document.getElementById('link_pausar');
-  if (animacao.ligado) {
-    botaoPausar.textContent = "Pausar";
-  } else {
-    botaoPausar.textContent = "Continuar";
-  }
+  botaoPausar.textContent = animacao.ligado ? "Pausar" : "Continuar";
 }
 
+// Sair e encerrar
 function sairDoJogo() {
-  // Parar animação e música
   animacao.desligar();
   musicaAcao.pause();
   musicaAcao.currentTime = 0.0;
-  
-  // Resetar jogo (chama a função gameOver existente)
   gameOver();
 }
 
-////8 - TIROS ////
-// Atirar
+
+/* ============================================================
+   8 - TIROS
+============================================================ */
+// Ativar ou desativar tiro
 function ativarTiro(ativar) {
   if (ativar) {
     teclado.disparou(ESPACO, function () {
       nave.atirar();
     });
-  }
-  else
+  } else {
     teclado.disparou(ESPACO, null);
+  }
 }
 
-////9 - INÍCIO E FIM DO JOGO ////
-// Mostra botão de início de jogo
+
+/* ============================================================
+   9 - INÍCIO E FIM DO JOGO
+============================================================ */
+// Exibir botão Jogar
 function mostrarLinkJogar() {
   document.getElementById('link_jogar').style.display = "block";
 }
 
-// Função para alternar o estado do áudio
+// Alternar áudio on/off
 function toggleAudio() {
   musicaAcao.muted = !musicaAcao.muted;
-  atualizarInterfaceAudio(); // Usar a função correta
+  atualizarInterfaceAudio();
 }
 
-// Inicia jogo
+// Iniciar jogo
 function iniciarJogo() {
   criadorInimigos.ultimoOvni = new Date().getTime();
-  // Tiro
+
   ativarTiro(true);
-  // Pausa
   teclado.disparou(ENTER, pausarJogo);
 
   document.getElementById('link_jogar').style.display = "none";
 
-  musicaAcao.play();
-  animacao.ligar();
-
-  // Iniciar música apenas se não estiver mudo
   if (!musicaAcao.muted) {
     musicaAcao.play();
   }
   animacao.ligar();
 }
 
+// Fim de jogo
 function gameOver() {
-  // Tiro
   ativarTiro(false);
-  // Pausa
   teclado.disparou(ENTER, null);
-  // Parar música e rebobinar
+
   musicaAcao.pause();
   musicaAcao.currentTime = 0.0;
-  // Fundo
+
   context.drawImage(imagens.espaco, 0, 0, canvas.width, canvas.height);
-  // Texto Game Over
+
   context.save();
   context.fillStyle = 'white';
   context.font = '70px sans-serif';
   context.fillText('GAME OVER', 40, 200);
   context.fillText('Pontos: ' + painel.pontuacao, 70, 280);
   context.restore();
-  // Voltar o link "Jogar"
+
   mostrarLinkJogar();
-  
-  // FALTANDO: Esconder botões de controle quando o jogo acaba
   esconderBotoesControle();
-  // Restaurar as condições da nave
+
+  // Reset nave e painel
   nave.vidasExtras = 3;
   painel.pontuacao = 0;
   nave.nivel = 1;
   nave.formatoAtual = 0;
-  nave.imagem = imagens.nave; // Voltar para imagem original
+  nave.imagem = imagens.nave;
   nave.largura = nave.imagem.width;
   nave.altura = nave.imagem.height;
   nave.posicionar();
+
   animacao.novoSprite(nave);
   colisor.novoSprite(nave);
-  // Restaurar velocidades dos fundos
+
   espaco.velocidade = 70;
   estrelas.velocidade = 160;
   nuvens.velocidade = 510;
-  // Tirar todos os inimigos da tela
+
   removerInimigos();
 }
 
+// Limpa inimigos restantes
 function removerInimigos() {
   for (let i in animacao.sprites) {
     if (animacao.sprites[i] instanceof Ovni)
       animacao.excluirSprite(animacao.sprites[i]);
   }
 }
-
