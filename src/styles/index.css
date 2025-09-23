@@ -102,7 +102,6 @@ body {
 
 /* BOTÃO DE PAUSAR/CONTINUAR */
 #link_pausar {
-  display: none;
   background: linear-gradient(135deg, #10b981, #059669);
   border: 1px solid rgba(16, 185, 129, 0.5);
 }
@@ -113,7 +112,6 @@ body {
 
 /* BOTÃO DE SAIR */
 #link_sair {
-  display: none;
   background: linear-gradient(135deg, #ef4444, #dc2626);
   border: 1px solid rgba(239, 68, 68, 0.5);
 }

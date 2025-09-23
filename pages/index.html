@@ -1,54 +1,59 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>
-      Shooter Geometric - Jogo de Nave 2D com HTML5 Canvas e JavaScript
-    </title>
-    <link rel="stylesheet" href="../src/styles/index.css" />
-    <link rel="stylesheet" href="../src/styles/header-jogo.css" />
-  </head>
-  <body>
-    <header class="header">
-      <div class="header-logo">
-        <img src="../assets/img/nave.png" alt="Nave Shooter" />
-        <span>Shooter Geometric</span>
-      </div>
-      <nav class="header-nav">
-        <a href="/" class="active">Jogo</a>
-        <a href="/sobre">Sobre</a>
-        <a href="/contato">Contato</a>
-      </nav>
-    </header>
-    <!-- CONTAINER DO JOGO -->
-    <div class="canvas">
-      <!-- AREA DO JOGO -->
-      <canvas width="485" height="485" id="canvas_animacao"></canvas>
-<!-- Container dos botões no canto superior esquerdo -->
-     <div class="controles">
-      <a id="link_volume" class="controle-btn" href="javascript:toggleAudio()">Áudio ligado</a>
-      <a id="link_pausar" class="controle-btn" href="javascript:pausarJogoBotao()" style="display:none;">Pausar</a>
-      <a id="link_sair" class="controle-btn" href="javascript:sairDoJogo()" style="display:none;">Sair</a>
-     </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shooter Geometric - Jogo de Nave 2D</title>
+  <link rel="stylesheet" href="../src/styles/index.css" />
+  <link rel="stylesheet" href="../src/styles/header-jogo.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo">
+      <img src="../assets/img/nave.png" alt="Nave Shooter" />
+      <span>Shooter Geometric</span>
+    </div>
+    <nav class="header-nav">
+      <a href="/" class="active">Jogo</a>
+      <a href="/sobre">Sobre</a>
+      <a href="/contato">Contato</a>
+    </nav>
+  </header>
 
-    <!-- Botão de jogar (centro da tela) -->
-    <a id="link_jogar" class="playbtn" href="javascript:iniciarJogo()" style="display:none;">Começar!</a>
-   
-  </div>
-    <!-- FIM DO CONTAINER DO JOGO -->
+  <!-- CONTAINER DO JOGO -->
+  <main class="canvas">
+    <canvas width="485" height="485" id="canvas_animacao"></canvas>
 
-    <!-- SCRIPTS DO JOGO -->
-    <script src="./src/scripts/animacao.js"></script>
-    <script src="./src/scripts/fundo.js"></script>
-    <script src="./src/scripts/teclado.js"></script>
-    <script src="./src/scripts/nave.js"></script>
-    <script src="./src/scripts/tiro.js"></script>
-    <script src="./src/scripts/colisor.js"></script>
-    <script src="./src/scripts/ovni.js"></script>
-    <script src="./src/scripts/spritesheet.js"></script>
-    <script src="./src/scripts/explosao.js"></script>
-    <script src="./src/scripts/painel.js"></script>
-    <script src="./src/scripts/canvas.js"></script>
-  </body>
+    <!-- Controles -->
+    <div class="controles">
+      <button id="link_volume" class="controle-btn btn-volume">Áudio ligado</button>
+      <button id="link_pausar" class="controle-btn btn-pause">Pausar</button>
+      <button id="link_sair" class="controle-btn btn-exit">Sair</button>
+    </div>
+
+    <!-- Botão central para iniciar -->
+    <button id="link_jogar" class="playbtn hidden">Começar!</button>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script src="./src/scripts/animacao.js"></script>
+  <script src="./src/scripts/fundo.js"></script>
+  <script src="./src/scripts/teclado.js"></script>
+  <script src="./src/scripts/nave.js"></script>
+  <script src="./src/scripts/tiro.js"></script>
+  <script src="./src/scripts/colisor.js"></script>
+  <script src="./src/scripts/ovni.js"></script>
+  <script src="./src/scripts/spritesheet.js"></script>
+  <script src="./src/scripts/explosao.js"></script>
+  <script src="./src/scripts/painel.js"></script>
+  <script src="./src/scripts/canvas.js"></script>
+
+  <!-- Liga os botões às funções JS -->
+  <script>
+    document.getElementById("link_volume").onclick = toggleAudio;
+    document.getElementById("link_pausar").onclick = pausarJogoBotao;
+    document.getElementById("link_sair").onclick = sairDoJogo;
+    document.getElementById("link_jogar").onclick = iniciarJogo;
+  </script>
+</body>
 </html>

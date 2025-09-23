@@ -79,21 +79,9 @@ function carregando() {
   if (carregadas == totalImagens) {
     iniciarObjetos();
     mostrarLinkJogar();
-       // Botões aparecem quando o jogo termina de carregar
-       mostrarBotoesControle();
       }
     }
     
-    function mostrarBotoesControle() {
-      document.getElementById('link_pausar').style.display = "block";
-      document.getElementById('link_sair').style.display = "block";
-    }
-    
-    function esconderBotoesControle() {
-      document.getElementById('link_pausar').style.display = "none";
-      document.getElementById('link_sair').style.display = "none";
-    }
-
 ////4 - INICIALIZAÇÃO DOS OBJETOS DO JOGO ////
 // Função que inicia os objetos todos
 function iniciarObjetos() {
@@ -249,9 +237,6 @@ function sairDoJogo() {
   
   // Resetar jogo (chama a função gameOver existente)
   gameOver();
-  
-  // Esconder botões de controle
-  esconderBotoesControle();
 }
 
 ////8 - TIROS ////
