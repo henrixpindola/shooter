@@ -1,0 +1,502 @@
+/* ===========================
+   VARIÁVEIS GLOBAIS
+=========================== */
+:root {
+  --bg: #0f172a;
+  --fg: #e2e8f0;
+  --accent: #38bdf8;
+  --header-bg: rgba(15,23,42,0.95);
+}
+
+/* ===========================
+   RESET & BASE
+=========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* ===========================
+   HEADER (ESTILO UNIFICADO)
+=========================== */
+.header {
+  width: 100%;
+  background: var(--header-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem 2rem;
+  box-shadow: 0 2px 8px #0008;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 0.3rem;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.header-logo img {
+  height: 40px;
+  width: 40px;
+  animation: spin 6s linear infinite;
+}
+
+.header-nav {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.header-nav a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+.header-nav a.active {
+  color: #fff;
+  background: var(--accent);
+  border-radius: 6px;
+  padding: 0.2em 0.7em;
+  box-shadow: 0 2px 8px #0003;
+}
+
+.header-nav a:hover {
+  color: orange;
+}
+
+/* ===========================
+   CONTAINER PRINCIPAL
+=========================== */
+.container {
+  background: rgba(15,23,42,0.92);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px #000a;
+  padding: 2.5rem 2.2rem 2rem 2.2rem;
+  margin: 4rem auto;
+  width: 100%;
+  height: 100vh;
+  max-width: 650px;
+  text-align: center;
+  border: 1.5px solid rgba(226,232,240,0.1);
+  position: absolute;
+  overflow-y: auto;
+  top: 120px;
+}
+
+/* ===========================
+   CONTROLES (TOPO ESQUERDO - PÁGINA DO JOGO)
+=========================== */
+.controles {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.8);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* Botões - estilo unificado */
+.controle-btn {
+  padding: 12px 20px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 140px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.controle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.1);
+}
+
+.controle-btn:active {
+  transform: translateY(0);
+}
+
+/* Botão volume */
+#link_volume {
+  display: flex !important;
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+}
+
+#link_volume:hover {
+  background: linear-gradient(135deg, #60a5fa, #38bdf8);
+}
+
+/* Botão pausar */
+#link_pausar {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+}
+
+#link_pausar:hover {
+  background: linear-gradient(135deg, #34d399, #10b981);
+}
+
+/* Botão sair */
+#link_sair {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+}
+
+#link_sair:hover {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+}
+
+/* ===========================
+   TEXTOS E LINKS
+=========================== */
+h1, h2 {
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 1.8rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+  margin-top: 2rem;
+}
+
+p, ul {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #60a5fa;
+}
+
+/* ===========================
+   FORMULÁRIOS
+=========================== */
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.8rem;
+  background: rgba(15,23,42,0.95);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: var(--fg);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #60a5fa;
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background: #60a5fa;
+}
+
+/* ===========================
+   BOTÃO JOGAR
+=========================== */
+.playbtn {
+  display: none;
+  color: rgb(255, 149, 0);
+  font-size: 20px;
+  font-family: sans-serif;
+  text-shadow: 2px 2px 5px black;
+  position: absolute;
+  left: 50%;
+  top: 70%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 50%;
+  border: 2px solid rgba(245, 158, 11, 0.5);
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+}
+
+.playbtn:hover {
+  transform: translateX(-50%) scale(1.1);
+  filter: brightness(1.2);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+}
+
+/* ===========================
+   FORMULÁRIO DE CONTATO
+=========================== */
+.contato-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 1.5rem 1.2rem;
+  box-shadow: 0 2px 12px #0003;
+}
+
+.contato-form label {
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: -0.3rem;
+}
+
+.contato-form input,
+.contato-form textarea {
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.6em 0.8em;
+  font-size: 1em;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.contato-form input:focus,
+.contato-form textarea:focus {
+  border: 1.5px solid #fff;
+}
+
+.contato-form button {
+  background: linear-gradient(90deg, var(--accent), #0ea5e9);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7em 1.2em;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 0.5em;
+  box-shadow: 0 2px 8px #0003;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.contato-form button:hover {
+  background: linear-gradient(90deg, #0ea5e9, var(--accent));
+  transform: scale(1.04);
+}
+
+/* ===========================
+   ANIMAÇÕES
+=========================== */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes flutuar {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-30px) scale(1.08); }
+}
+
+.sobre-anim {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.sobre-anim img {
+  width: auto;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(56,189,248,0.6));
+  animation: flutuar 2s ease-in-out infinite alternate;
+}
+
+.sobre-anim img:nth-child(2) { animation-delay: 0.7s; }
+.sobre-anim img:nth-child(3) { animation-delay: 1.4s; }
+
+/* ===========================
+   CANVAS DO JOGO
+=========================== */
+.canvas {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#canvas_animacao {
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+/* ===========================
+   UTILITÁRIOS
+=========================== */
+.volumebtn {
+  all: unset;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ===========================
+   RESPONSIVIDADE
+=========================== */
+@media (max-width: 768px) {
+  .container {
+    padding: 2rem 1rem;
+    top: 100px;
+  }
+  
+  .controles {
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+  }
+  
+  .controle-btn {
+    width: 120px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  
+  .header {
+    padding: 1rem 1.5rem;
+  }
+  
+  .header-nav {
+    gap: 1rem;
+  }
+  
+  .header-nav a {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .controles {
+    top: 5px;
+    left: 5px;
+    padding: 8px;
+  }
+  
+  .controle-btn {
+    width: 100px;
+    padding: 8px 12px;
+    font-size: 12px;
+    min-height: 40px;
+  }
+  
+  .header {
+    padding: 0.8rem 1rem;
+  }
+  
+  .header-logo img {
+    height: 30px;
+    width: 30px;
+  }
+  
+  .header-nav {
+    gap: 0.8rem;
+  }
+  
+  .header-nav a {
+    font-size: 0.9rem;
+  }
+  
+  .container {
+    top: 90px;
+    padding: 1.5rem 1rem;
+  }
+  
+  .sobre-anim {
+    gap: 1rem;
+  }
+  
+  .sobre-anim img {
+    height: 36px;
+  }
+}

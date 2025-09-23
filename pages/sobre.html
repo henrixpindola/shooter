@@ -1,13 +1,10 @@
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sobre - Shooter Geometric</title>
-  <link rel="stylesheet" href="../src/styles/index.css" />
-  <link rel="stylesheet" href="../src/styles/header-jogo.css" />
+  <link rel="stylesheet" href="../src/styles/styles.css" />
   </head>
   <body>
     <header class="header">
@@ -21,16 +18,6 @@
         <a href="/pages/contato.html">Contato</a>
       </nav>
     </header>
-    <script>
-      // Destaca o link ativo no header
-      const links = document.querySelectorAll('.header-nav a');
-      const path = window.location.pathname;
-      links.forEach(link => {
-        if (link.getAttribute('href') === path || (path === '/' && link.getAttribute('href').endsWith('index.html'))) {
-          link.classList.add('active');
-        }
-      });
-    </script>
     <div class="container">
       <div class="sobre-anim">
         <img src="../assets/img/nave.png" alt="Nave" />
