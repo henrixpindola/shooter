@@ -9,6 +9,8 @@ const context = canvas.getContext('2d');
 let imagens, animacao, teclado, colisor, nave, criadorInimigos;
 let totalImagens = 0, carregadas = 0;
 let musicaAcao;
+let confirmacaoSairAtiva = false; // Nova variável para controle da confirmação
+let primeiraVezSair = false; // Controla se é a primeira vez que clica em "Sair"
 
 
 /* ============================================================
@@ -80,6 +82,8 @@ function carregando() {
   if (carregadas == totalImagens) {
     iniciarObjetos();
     mostrarLinkJogar();
+    // Esconde botões na tela de abertura
+    esconderBotoesControle();
   }
 }
 
@@ -123,9 +127,10 @@ function configuracoesIniciais() {
   estrelas.velocidade = 160;
   nuvens.velocidade = 510;
 
-  // Nave
+  // Nave - REMOVIDA a rotação automática
   nave.posicionar();
   nave.velocidade = 210;
+  nave.girando = false; // Nova propriedade para controlar rotação
 
   // Inimigos
   criacaoInimigos();
@@ -210,6 +215,8 @@ function novoOvni() {
 ============================================================ */
 // Pausar ou retomar jogo
 function pausarJogo() {
+  if (confirmacaoSairAtiva) return; // Não permite pausar durante confirmação
+  
   if (animacao.ligado) {
     animacao.desligar();
     musicaAcao.pause();
@@ -232,16 +239,169 @@ function pausarJogo() {
 // Alternar texto do botão Pausar
 function pausarJogoBotao() {
   pausarJogo();
-  const botaoPausar = document.getElementById('link_pausar');
-  botaoPausar.textContent = animacao.ligado ? "Pausar" : "Continuar";
+  atualizarBotaoPausar();
 }
 
-// Sair e encerrar
+// Atualiza o texto do botão Pausar/Continuar
+function atualizarBotaoPausar() {
+  const botaoPausar = document.getElementById('link_pausar');
+  
+  if (primeiraVezSair) {
+    botaoPausar.textContent = "Continuar";
+  } else {
+    botaoPausar.textContent = animacao.ligado ? "Pausar" : "Continuar";
+  }
+}
+
+// Mostrar/ocultar botões de controle
+function mostrarBotoesControle() {
+  document.getElementById('link_pausar').style.display = "inline-block";
+  document.getElementById('link_sair').style.display = "inline-block";
+}
+
+function esconderBotoesControle() {
+  document.getElementById('link_pausar').style.display = "none";
+  document.getElementById('link_sair').style.display = "none";
+}
+
+// Sair e encerrar - AGORA COM CONFIRMAÇÃO EM DUAS ETAPAS
 function sairDoJogo() {
+  if (confirmacaoSairAtiva) return;
+  
+  if (!primeiraVezSair) {
+    // Primeira vez que clica em "Sair" - mostra confirmação
+    primeiraVezSair = true;
+    mostrarConfirmacaoSair();
+    atualizarBotaoPausar(); // Muda "Pausar" para "Continuar"
+  } else {
+    // Segunda vez que clica em "Sair" - confirma saída
+    confirmarSaida();
+  }
+}
+
+// Nova função para mostrar confirmação de saída
+function mostrarConfirmacaoSair() {
+  confirmacaoSairAtiva = true;
   animacao.desligar();
+  musicaAcao.pause();
+  
+  // Esconde botões originais durante a confirmação
+  esconderBotoesControle();
+  
+  // Desenha overlay semi-transparente
+  context.save();
+  context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Desenha caixa de confirmação
+  const caixaLargura = 340;
+  const caixaAltura = 200;
+  const caixaX = (canvas.width - caixaLargura) / 2;
+  const caixaY = (canvas.height - caixaAltura) / 2;
+  
+  context.fillStyle = '#1a1a1a';
+  context.strokeStyle = '#ffffff';
+  context.lineWidth = 2;
+  context.fillRect(caixaX, caixaY, caixaLargura, caixaAltura);
+  context.strokeRect(caixaX, caixaY, caixaLargura, caixaAltura);
+  
+  // Texto de confirmação
+  context.fillStyle = 'white';
+  context.font = 'bold 24px sans-serif';
+  context.textAlign = 'center';
+  context.fillText('Deseja realmente sair do jogo?', canvas.width / 2, caixaY + 50);
+  
+  context.font = '18px sans-serif';
+  context.fillText('Clique novamente em "Sair" para confirmar', canvas.width / 2, caixaY + 85);
+  context.fillText('ou em "Continuar" para voltar ao jogo', canvas.width / 2, caixaY + 110);
+  
+  // Desenha botões
+  const btnContinuarX = canvas.width / 2 - 120;
+  const btnSairX = canvas.width / 2 + 40;
+  const btnY = caixaY + 140;
+  const btnLargura = 100;
+  const btnAltura = 35;
+  
+  // Botão Continuar
+  context.fillStyle = '#4CAF50';
+  context.fillRect(btnContinuarX, btnY, btnLargura, btnAltura);
+  context.strokeRect(btnContinuarX, btnY, btnLargura, btnAltura);
+  context.fillStyle = 'white';
+  context.font = 'bold 16px sans-serif';
+  context.fillText('Continuar', btnContinuarX + btnLargura/2, btnY + 23);
+  
+  // Botão Sair
+  context.fillStyle = '#f44336';
+  context.fillRect(btnSairX, btnY, btnLargura, btnAltura);
+  context.strokeRect(btnSairX, btnY, btnLargura, btnAltura);
+  context.fillStyle = 'white';
+  context.fillText('Sair', btnSairX + btnLargura/2, btnY + 23);
+  
+  context.restore();
+  
+  // Adiciona evento de clique no canvas para os botões
+  canvas.addEventListener('click', verificarCliqueBotao);
+}
+
+// Verifica clique nos botões da confirmação
+function verificarCliqueBotao(event) {
+  if (!confirmacaoSairAtiva) return;
+  
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  
+  const caixaLargura = 340;
+  const caixaAltura = 200;
+  const caixaX = (canvas.width - caixaLargura) / 2;
+  const caixaY = (canvas.height - caixaAltura) / 2;
+  
+  const btnContinuarX = canvas.width / 2 - 120;
+  const btnSairX = canvas.width / 2 + 40;
+  const btnY = caixaY + 140;
+  const btnLargura = 100;
+  const btnAltura = 35;
+  
+  // Verifica clique no botão Continuar
+  if (x >= btnContinuarX && x <= btnContinuarX + btnLargura &&
+      y >= btnY && y <= btnY + btnAltura) {
+    cancelarSaida();
+  }
+  
+  // Verifica clique no botão Sair
+  if (x >= btnSairX && x <= btnSairX + btnLargura &&
+      y >= btnY && y <= btnY + btnAltura) {
+    confirmarSaida();
+  }
+}
+
+// Confirmar saída do jogo
+function confirmarSaida() {
+  confirmacaoSairAtiva = false;
+  primeiraVezSair = false;
+  canvas.removeEventListener('click', verificarCliqueBotao);
+  
   musicaAcao.pause();
   musicaAcao.currentTime = 0.0;
   gameOver();
+  atualizarBotaoPausar(); // Restaura texto do botão
+}
+
+// Cancelar saída do jogo
+function cancelarSaida() {
+  confirmacaoSairAtiva = false;
+  primeiraVezSair = false;
+  canvas.removeEventListener('click', verificarCliqueBotao);
+  
+  // Mostra botões originais novamente
+  mostrarBotoesControle();
+  
+  animacao.ligar();
+  if (!musicaAcao.muted) {
+    musicaAcao.play();
+  }
+  
+  atualizarBotaoPausar(); // Restaura texto do botão
 }
 
 
@@ -252,7 +412,9 @@ function sairDoJogo() {
 function ativarTiro(ativar) {
   if (ativar) {
     teclado.disparou(ESPACO, function () {
-      nave.atirar();
+      if (!confirmacaoSairAtiva) { // Só atira se não estiver em confirmação
+        nave.atirar();
+      }
     });
   } else {
     teclado.disparou(ESPACO, null);
@@ -266,6 +428,11 @@ function ativarTiro(ativar) {
 // Exibir botão Jogar
 function mostrarLinkJogar() {
   document.getElementById('link_jogar').style.display = "block";
+}
+
+// Ocultar botão Jogar
+function esconderLinkJogar() {
+  document.getElementById('link_jogar').style.display = "none";
 }
 
 // Alternar áudio on/off
@@ -286,6 +453,7 @@ function iniciarJogo() {
     nave.imagem = imagens.nave;
     nave.largura = nave.imagem.width;
     nave.altura = nave.imagem.height;
+    nave.girando = false; // Garante que não está girando
     nave.posicionar();
 
     // Resetar velocidades dos fundos
@@ -307,11 +475,19 @@ function iniciarJogo() {
 
   // Configurações comuns para iniciar e reiniciar
   criadorInimigos.ultimoOvni = new Date().getTime();
+  confirmacaoSairAtiva = false; // Reseta confirmação
+  primeiraVezSair = false; // Reseta estado de confirmação
+  
+  // Remove event listener se existir
+  canvas.removeEventListener('click', verificarCliqueBotao);
 
   ativarTiro(true);
   teclado.disparou(ENTER, pausarJogo);
 
-  document.getElementById('link_jogar').style.display = "none";
+  esconderLinkJogar();
+  
+  // Mostra botões de controle quando o jogo inicia
+  mostrarBotoesControle();
 
   if (!musicaAcao.muted) {
     musicaAcao.currentTime = 0.0;
@@ -319,6 +495,7 @@ function iniciarJogo() {
   }
   
   animacao.ligar();
+  atualizarBotaoPausar(); // Atualiza texto do botão
 }
 
 // Fim de jogo
@@ -338,8 +515,9 @@ function gameOver() {
   context.fillText('Pontos: ' + painel.pontuacao, 70, 280);
   context.restore();
 
-  mostrarLinkJogar();
+  // Esconde botões de controle durante game over
   esconderBotoesControle();
+  mostrarLinkJogar();
 }
 
 // Limpa inimigos restantes
@@ -351,9 +529,4 @@ function removerInimigos() {
       animacao.excluirSprite(animacao.sprites[i]);
     }
   }
-}
-
-// Esconder botões de controle (função adicionada para completar o código)
-function esconderBotoesControle() {
-  // Implementação para esconder botões de controle se necessário
 }
