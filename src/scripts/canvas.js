@@ -274,8 +274,38 @@ function toggleAudio() {
   atualizarInterfaceAudio();
 }
 
-// Iniciar jogo
+// Função unificada para iniciar/reiniciar o jogo
 function iniciarJogo() {
+  // Resetar estado do jogo se for um reinício
+  if (animacao) {
+    // Resetar nave e painel
+    nave.vidasExtras = 3;
+    painel.pontuacao = 0;
+    nave.nivel = 1;
+    nave.formatoAtual = 0;
+    nave.imagem = imagens.nave;
+    nave.largura = nave.imagem.width;
+    nave.altura = nave.imagem.height;
+    nave.posicionar();
+
+    // Resetar velocidades dos fundos
+    espaco.velocidade = 70;
+    estrelas.velocidade = 160;
+    nuvens.velocidade = 510;
+
+    // Remover inimigos existentes
+    removerInimigos();
+
+    // Garantir que a nave está na animação e colisor
+    if (!animacao.sprites.includes(nave)) {
+      animacao.novoSprite(nave);
+    }
+    if (!colisor.sprites.includes(nave)) {
+      colisor.novoSprite(nave);
+    }
+  }
+
+  // Configurações comuns para iniciar e reiniciar
   criadorInimigos.ultimoOvni = new Date().getTime();
 
   ativarTiro(true);
@@ -284,8 +314,10 @@ function iniciarJogo() {
   document.getElementById('link_jogar').style.display = "none";
 
   if (!musicaAcao.muted) {
+    musicaAcao.currentTime = 0.0;
     musicaAcao.play();
   }
+  
   animacao.ligar();
 }
 
@@ -308,31 +340,20 @@ function gameOver() {
 
   mostrarLinkJogar();
   esconderBotoesControle();
-
-  // Reset nave e painel
-  nave.vidasExtras = 3;
-  painel.pontuacao = 0;
-  nave.nivel = 1;
-  nave.formatoAtual = 0;
-  nave.imagem = imagens.nave;
-  nave.largura = nave.imagem.width;
-  nave.altura = nave.imagem.height;
-  nave.posicionar();
-
-  animacao.novoSprite(nave);
-  colisor.novoSprite(nave);
-
-  espaco.velocidade = 70;
-  estrelas.velocidade = 160;
-  nuvens.velocidade = 510;
-
-  removerInimigos();
 }
 
 // Limpa inimigos restantes
 function removerInimigos() {
-  for (let i in animacao.sprites) {
-    if (animacao.sprites[i] instanceof Ovni)
+  if (!animacao || !animacao.sprites) return;
+  
+  for (let i = animacao.sprites.length - 1; i >= 0; i--) {
+    if (animacao.sprites[i] instanceof Ovni) {
       animacao.excluirSprite(animacao.sprites[i]);
+    }
   }
+}
+
+// Esconder botões de controle (função adicionada para completar o código)
+function esconderBotoesControle() {
+  // Implementação para esconder botões de controle se necessário
 }
