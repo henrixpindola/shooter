@@ -55,10 +55,10 @@ function atualizarInterfaceAudio() {
   const linkVolume = document.getElementById('link_volume');
 
   if (musicaAcao.muted) {
-    linkVolume.textContent = "Áudio desligado";
+    linkVolume.textContent = "Áudio: off";
     linkVolume.classList.add('muted');
   } else {
-    linkVolume.textContent = "Áudio ligado";
+    linkVolume.textContent = "Áudio: on";
     linkVolume.classList.remove('muted');
   }
 }
