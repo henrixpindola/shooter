@@ -1,38 +1,49 @@
-function Spritesheet(context, imagem, linhas, colunas) {
-  this.context = context;
-  this.imagem = imagem;
-  this.numLinhas = linhas;
-  this.numColunas = colunas;
-  this.intervalo = 0;
-  this.linha = 0;
-  this.coluna = 0;
-  this.fimDoCiclo = null;
-}
+export class Spritesheet {
+  constructor(context, imagem, linhas, colunas) {
+    this.context = context;
+    this.imagem = imagem;
+    this.numLinhas = linhas;
+    this.numColunas = colunas;
+    this.intervalo = 0;
+    this.linha = 0;
+    this.coluna = 0;
+    this.fimDoCiclo = null;
+    this.ultimoTempo = 0;
+  }
 
-Spritesheet.prototype = {
-  proximoQuadro: function () {
-    let agora = new Date().getTime();
-    // Se ainda não tem último tempo medido 
+  proximoQuadro() {
+    const agora = new Date().getTime();
+
     if (!this.ultimoTempo) this.ultimoTempo = agora;
-    // Já é hora de mudar de coluna? 
-    if (agora - this.ultimoTempo < this.intervalo)
+
+    if (agora - this.ultimoTempo < this.intervalo) {
       return;
+    }
 
     if (this.coluna < this.numColunas - 1) {
       this.coluna++;
-    }
-    else {
+    } else {
       this.coluna = 0;
-      // Acabou o ciclo
       if (this.fimDoCiclo) this.fimDoCiclo();
     }
-    // Guardar hora da última mudança
+
     this.ultimoTempo = agora;
-  },
-  desenhar: function (x, y) {
+  }
+
+  desenhar(x, y) {
     const largura = this.imagem.width / this.numColunas;
     const altura = this.imagem.height / this.numLinhas;
 
-    this.context.drawImage(this.imagem, largura * this.coluna, altura * this.linha, largura, altura, x, y, largura, altura);
+    this.context.drawImage(
+      this.imagem,
+      largura * this.coluna,
+      altura * this.linha,
+      largura,
+      altura,
+      x,
+      y,
+      largura,
+      altura
+    );
   }
 }

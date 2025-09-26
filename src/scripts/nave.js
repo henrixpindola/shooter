@@ -1,90 +1,120 @@
-function Nave(context, teclado, imagem, imgExplosao) {
-  this.context = context;
-  this.teclado = teclado;
-  this.imagem = imagem;
-  this.x = 0;
-  this.y = 0;
-  this.velocidade = 0;
-  this.spritesheet = new Spritesheet(context, imagem, 3, 2);
-  this.spritesheet.linha = 0;
-  this.spritesheet.intervalo = 100;
-  this.acabaramVidas = null;
-  this.vidasExtras = 3;
-  this.imgExplosao = imgExplosao;
-}
+import {
+  SETA_ESQUERDA,
+  SETA_DIREITA,
+  SETA_CIMA,
+  SETA_BAIXO,
+} from './teclado.js';
+import { Spritesheet } from './spritesheet.js';
+import { Tiro } from './tiro.js';
+import { Ovni } from './ovni.js';
+import { Explosao } from './explosao.js';
 
-Nave.prototype = {
-  atualizar: function () {
-    let incremento = this.velocidade * this.animacao.decorrido / 1000;
-    if (this.teclado.pressionada(SETA_ESQUERDA) && this.x > 0)
+export class Nave {
+  constructor(context, teclado, imagem, imgExplosao) {
+    this.context = context;
+    this.teclado = teclado;
+    this.imagem = imagem;
+    this.imgExplosao = imgExplosao;
+    this.x = 0;
+    this.y = 0;
+    this.velocidade = 0;
+    this.spritesheet = new Spritesheet(context, imagem, 3, 2);
+    this.spritesheet.linha = 0;
+    this.spritesheet.intervalo = 100;
+    this.acabaramVidas = null;
+    this.vidasExtras = 3;
+  }
+
+  atualizar() {
+    const incremento = (this.velocidade * this.animacao.decorrido) / 1000;
+    const canvasWidth = this.context.canvas.width;
+    const canvasHeight = this.context.canvas.height;
+
+    if (this.teclado.pressionada(SETA_ESQUERDA) && this.x > 0) {
       this.x -= incremento;
-
-    if (this.teclado.pressionada(SETA_DIREITA) && this.x < this.context.canvas.width - 36)
+    }
+    if (
+      this.teclado.pressionada(SETA_DIREITA) &&
+      this.x < canvasWidth - 36
+    ) {
       this.x += incremento;
-
-    if (this.teclado.pressionada(SETA_CIMA) && this.y > 0)
+    }
+    if (this.teclado.pressionada(SETA_CIMA) && this.y > 0) {
       this.y -= incremento;
-
-    if (this.teclado.pressionada(SETA_BAIXO) && this.y < this.context.canvas.height - 48)
+    }
+    if (
+      this.teclado.pressionada(SETA_BAIXO) &&
+      this.y < canvasHeight - 48
+    ) {
       this.y += incremento;
+    }
+  }
 
-  },
-  desenhar: function () {
-    if (this.teclado.pressionada(SETA_ESQUERDA))
+  desenhar() {
+    if (this.teclado.pressionada(SETA_ESQUERDA)) {
       this.spritesheet.linha = 1;
-    else if (this.teclado.pressionada(SETA_DIREITA))
+    } else if (this.teclado.pressionada(SETA_DIREITA)) {
       this.spritesheet.linha = 2;
-    else
+    } else {
       this.spritesheet.linha = 0;
+    }
 
     this.spritesheet.desenhar(this.x, this.y);
     this.spritesheet.proximoQuadro();
+  }
 
-  },
-  atirar: function () {
-    let tiro = new Tiro(this.context, this);
+  atirar() {
+    const tiro = new Tiro(this.context, this);
     this.animacao.novoSprite(tiro);
     this.colisor.novoSprite(tiro);
-  },
-  retangulosColisao: function () {
-    let rets = [
+  }
+
+  retangulosColisao() {
+    return [
       { x: this.x + 2, y: this.y + 19, largura: 9, altura: 13 },
       { x: this.x + 13, y: this.y + 3, largura: 10, altura: 33 },
       { x: this.x + 25, y: this.y + 19, largura: 9, altura: 13 },
     ];
-    
-    return rets;
-  },
-  colidiuCom: function (outro) {
+  }
+
+  colidiuCom(outro) {
     if (outro instanceof Ovni) {
       this.animacao.excluirSprite(this);
       this.animacao.excluirSprite(outro);
       this.colisor.excluirSprite(this);
       this.colisor.excluirSprite(outro);
 
-      let exp1 = new Explosao(this.context, this.imgExplosao, this.x, this.y);
-      let exp2 = new Explosao(this.context, this.imgExplosao, outro.x, outro.y);
+      const exp1 = new Explosao(
+        this.context,
+        this.imgExplosao,
+        this.x,
+        this.y
+      );
+      const exp2 = new Explosao(
+        this.context,
+        this.imgExplosao,
+        outro.x,
+        outro.y
+      );
 
       this.animacao.novoSprite(exp1);
       this.animacao.novoSprite(exp2);
 
-      let nave = this;
-      exp1.fimDaExplosao = function () {
-        nave.vidasExtras--;
-        if (nave.vidasExtras < 1) {
-          if (nave.acabaramVidas) nave.acabaramVidas();
+      exp1.fimDaExplosao = () => {
+        this.vidasExtras--;
+        if (this.vidasExtras < 1) {
+          if (this.acabaramVidas) this.acabaramVidas();
+        } else {
+          this.colisor.novoSprite(this);
+          this.animacao.novoSprite(this);
+          this.posicionar();
         }
-        else {
-          // Recolocar nave no cenário
-          nave.colisor.novoSprite(nave);
-          nave.animacao.novoSprite(nave);
-          nave.posicionar();
-        }
-      }
+      };
     }
-  },
-  posicionar: function () {
-    let canvas = this.context.canvas;
+  }
+
+  posicionar() {
+    const canvas = this.context.canvas;
     this.x = canvas.width / 2 - 18;
     this.y = canvas.height - 48;
   }

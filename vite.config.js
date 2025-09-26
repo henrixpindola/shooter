@@ -1,59 +1,19 @@
 import { defineConfig } from 'vite';
-import { resolve } from 'path';
-import fs from 'fs';
 
-function discoverHtmlPages(pagesDir) {
-  if (!fs.existsSync(pagesDir)) return {};
-  const entries = {};
-  fs.readdirSync(pagesDir)
-    .filter((f) => f.endsWith('.html'))
-    .forEach((f) => {
-      const name = f.replace(/\.html$/, '');
-      entries[name] = resolve(pagesDir, f);
-    });
-  return entries;
-}
-
-const pagesDir = resolve(__dirname, 'pages');
-const input = discoverHtmlPages(pagesDir);
-if (!input.index) input.index = resolve(pagesDir, 'index.html');
-
+// https://vitejs.dev/config/
 export default defineConfig({
-  appType: 'mpa',
-  plugins: [
-    {
-      name: 'pretty-urls-pages-mapper',
-      configureServer(server) {
-        server.middlewares.use((req, _res, next) => {
-          const original = req.url;
-          const url = original.split('?')[0];
-          if (url === '/' || url === '/index.html') {
-            req.url = '/pages/index.html';
-          } else if (!url.includes('.') && !url.startsWith('/api')) {
-            // ex.: /sobre -> /pages/sobre.html
-            req.url = `/pages${url}.html`;
-          }
-          next();
-        });
-      }
-    }
-  ],
+  // Define o diretório raiz do projeto, onde o index.html está localizado.
+  root: '.',
+  // Define o diretório para assets estáticos. 'public' é o padrão.
+  publicDir: 'public',
   server: {
+    // Porta para o servidor de desenvolvimento
     port: 3000,
-    strictPort: false,
-    open: '/pages/index.html',
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true
-      }
-    }
+    // Abre o navegador automaticamente ao iniciar o servidor.
+    open: true,
   },
   build: {
-    rollupOptions: {
-      input
-    }
-  }
+    // Diretório de saída para o build de produção.
+    outDir: 'dist',
+  },
 });
-
-

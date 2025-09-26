@@ -1,29 +1,36 @@
+import { Spritesheet } from './spritesheet.js';
+
 const SOM_EXPLOSAO = new Audio();
-SOM_EXPLOSAO.src = "assets/snd/explosao.mp3";
+SOM_EXPLOSAO.src = '/assets/snd/explosao.mp3';
 SOM_EXPLOSAO.volume = 0.3;
 SOM_EXPLOSAO.load();
 
-function Explosao(context, imagem, x, y) {
-  this.context = context;
-  this.imagem = imagem;
-  this.spritesheet = new Spritesheet(context, imagem, 1, 5);
-  this.spritesheet.intervalo = 75;
-  this.x = x;
-  this.y = y;
-  let explosao = this;
-  this.spritesheet.fimDoCiclo = function () {
-    explosao.animacao.excluirSprite(explosao);
-    if (explosao.fimDaExplosao) explosao.fimDaExplosao();
+export class Explosao {
+  constructor(context, imagem, x, y) {
+    this.context = context;
+    this.imagem = imagem;
+    this.x = x;
+    this.y = y;
+    this.spritesheet = new Spritesheet(context, imagem, 1, 5);
+    this.spritesheet.intervalo = 75;
+    this.fimDaExplosao = null;
+
+    this.spritesheet.fimDoCiclo = () => {
+      this.animacao.excluirSprite(this);
+      if (this.fimDaExplosao) {
+        this.fimDaExplosao();
+      }
+    };
+
+    SOM_EXPLOSAO.currentTime = 0.0;
+    SOM_EXPLOSAO.play();
   }
-  SOM_EXPLOSAO.currentTime = 0.0;
-  SOM_EXPLOSAO.play();
-}
 
-Explosao.prototype = {
-  atualizar: function () {
+  atualizar() {
+    // A lógica de atualização está no `proximoQuadro` do spritesheet
+  }
 
-  },
-  desenhar: function () {
+  desenhar() {
     this.spritesheet.desenhar(this.x, this.y);
     this.spritesheet.proximoQuadro();
   }
