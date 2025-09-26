@@ -1,73 +1,77 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Shooter Geometric - Jogo de Nave 2D</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shooter Geometric - Jogo de Nave 2D</title>
 
-  <!-- ===========================
+    <!-- ===========================
        ESTILOS
   ============================ -->
-  <link rel="stylesheet" href="../src/styles/styles.css" /></head>
-<body>
-  <!-- ===========================
+    <link rel="stylesheet" href="../src/styles/styles.css" />
+  </head>
+  <body>
+    <!-- ===========================
        CABEÇALHO
   ============================ -->
-  <header class="header">
-    <div class="header-logo">
-      <img src="../assets/img/nave.png" alt="Nave Shooter" />
-      <span>Shooter Geometric</span>
-    </div>
-    <nav class="header-nav">
-      <a href="/" class="active">Jogo</a>
-      <a href="/sobre">Sobre</a>
-      <a href="/contato">Contato</a>
-    </nav>
-  </header>
+    <header class="header">
+      <div class="header-logo">
+        <img src="../assets/img/nave.png" alt="Nave Shooter" />
+        <span>Shooter Geometric</span>
+      </div>
+      <nav class="header-nav">
+        <a href="/" class="active">Jogo</a>
+        <a href="/sobre">Sobre</a>
+        <a href="/contato">Contato</a>
+      </nav>
+    </header>
 
-  <!-- ===========================
+    <!-- ===========================
        ÁREA PRINCIPAL DO JOGO
   ============================ -->
-  <main class="canvas">
-    <canvas width="450" height="450" id="canvas_animacao"></canvas>
+    <main class="canvas">
+      <canvas width="450" height="450" id="canvas_animacao"></canvas>
 
-    <!-- Controles -->
-    <div class="controles">
-      <button id="link_volume" class="controle-btn btn-volume">Áudio: on</button>
-      <button id="link_pausar" class="controle-btn btn-pause">Pausar</button>
-      <button id="link_sair" class="controle-btn btn-exit">Sair</button>
-    </div>
+      <!-- Controles -->
+      <div class="controles">
+        <button id="link_volume" class="controle-btn btn-volume">
+          Áudio: on
+        </button>
+        <button id="link_pausar" class="controle-btn btn-pause">Pausar</button>
+        <button id="link_sair" class="controle-btn btn-exit">Sair</button>
+      </div>
 
-    <!-- Botão central para iniciar -->
-    <div class="playbtn-container">
-      <button id="link_jogar" class="playbtn hidden">Começaaaar!</button>
-      <button id="link_voltar" class="btn-voltar">Voltar</button>
-    </div>
-  </main>
+      <!-- Botão central para iniciar -->
+      <div class="playbtn-container">
+        <button id="link_jogar" class="playbtn hidden">Começaaaar!</button>
+        <button id="link_voltar" class="btn-voltar hidden">Voltar</button>
+      </div>
+    </main>
 
-  <!-- ===========================
+    <!-- ===========================
        SCRIPTS DO JOGO
   ============================ -->
-  <script src="./src/scripts/animacao.js"></script>
-  <script src="./src/scripts/fundo.js"></script>
-  <script src="./src/scripts/teclado.js"></script>
-  <script src="./src/scripts/nave.js"></script>
-  <script src="./src/scripts/tiro.js"></script>
-  <script src="./src/scripts/colisor.js"></script>
-  <script src="./src/scripts/ovni.js"></script>
-  <script src="./src/scripts/spritesheet.js"></script>
-  <script src="./src/scripts/explosao.js"></script>
-  <script src="./src/scripts/painel.js"></script>
-  <script src="./src/scripts/canvas.js"></script>
+    <script src="./src/scripts/animacao.js"></script>
+    <script src="./src/scripts/fundo.js"></script>
+    <script src="./src/scripts/teclado.js"></script>
+    <script src="./src/scripts/nave.js"></script>
+    <script src="./src/scripts/tiro.js"></script>
+    <script src="./src/scripts/colisor.js"></script>
+    <script src="./src/scripts/ovni.js"></script>
+    <script src="./src/scripts/spritesheet.js"></script>
+    <script src="./src/scripts/explosao.js"></script>
+    <script src="./src/scripts/painel.js"></script>
+    <script src="./src/scripts/canvas.js"></script>
 
-  <!-- ===========================
+    <!-- ===========================
        AÇÕES DOS BOTÕES
   ============================ -->
-  <script>
-    document.getElementById("link_volume").onclick = toggleAudio;
-    document.getElementById("link_pausar").onclick = pausarJogoBotao;
-    document.getElementById("link_sair").onclick = sairDoJogo;
-    document.getElementById("link_jogar").onclick = iniciarJogo;
-  </script>
-</body>
+    <script>
+      document.getElementById("link_volume").onclick = toggleAudio;
+      document.getElementById("link_pausar").onclick = pausarJogoBotao;
+      document.getElementById("link_sair").onclick = sairDoJogo;
+      document.getElementById("link_jogar").onclick = iniciarJogo;
+      document.getElementById("link_voltar").onclick = voltarTelaCarregamento;
+    </script>
+  </body>
 </html>

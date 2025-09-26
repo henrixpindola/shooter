@@ -1,532 +1,451 @@
 /* ============================================================
    1 - CONFIGURAÇÃO INICIAL
 ============================================================ */
-// Canvas e contexto do jogo
 const canvas = document.getElementById('canvas_animacao');
 const context = canvas.getContext('2d');
 
-// Variáveis principais
 let imagens, animacao, teclado, colisor, nave, criadorInimigos;
 let totalImagens = 0, carregadas = 0;
 let musicaAcao;
-let confirmacaoSairAtiva = false; // Nova variável para controle da confirmação
-let primeiraVezSair = false; // Controla se é a primeira vez que clica em "Sair"
+let confirmacaoSairAtiva = false;
 
+let overlay = null;
 
 /* ============================================================
    2 - CARREGAMENTO DE RECURSOS
 ============================================================ */
-// Inicia carregamento de imagens e músicas
 carregarImagens();
 carregarMusicas();
 
-// Carregar imagens do jogo
+document.addEventListener('DOMContentLoaded', function() {
+  criarOverlay();
+
+  // Botão "Sair" - registra o clique
+  const btnSair = document.getElementById('link_sair');
+  if (btnSair) {
+      btnSair.addEventListener('click', sairDoJogo);
+  }
+});
+
+
+// Cria overlay (sempre escondido)
+function criarOverlay() {
+    if (overlay) return;
+
+    overlay = document.createElement('div');
+    overlay.className = 'overlay hidden';
+    overlay.innerHTML = `
+        <div class="overlay-box">
+            <h2>Deseja realmente sair do jogo?</h2>
+            <p>Esta ação encerrará a partida atual e você perderá seu progresso.</p>
+            <div class="overlay-botoes">
+                <button id="btnContinuar">Continuar Jogando</button>
+                <button id="btnSairConfirmar">Sair do Jogo</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.getElementById('btnContinuar').addEventListener('click', continuarJogando);
+    document.getElementById('btnSairConfirmar').addEventListener('click', confirmarSaida);
+}
+
+// Mostrar/ocultar overlay
+function mostrarOverlay() {
+    if (!overlay || confirmacaoSairAtiva) return;
+    overlay.classList.remove('hidden');
+}
+
+function esconderOverlay() {
+    if (!overlay) return;
+    overlay.classList.add('hidden');
+}
+
+// Carregar imagens
 function carregarImagens() {
-  imagens = {
-    espaco: "fundo-espaco.png",
-    estrelas: "fundo-estrelas.png",
-    nuvens: "fundo-nuvens.png",
-    nave: "1quadrado.png",
-    ovni: "ovni.png",
-    explosao: "explosao.png",
-  };
+    imagens = {
+        espaco: "fundo-espaco.png",
+        estrelas: "fundo-estrelas.png",
+        nuvens: "fundo-nuvens.png",
+        nave: "1quadrado.png",
+        ovni: "ovni.png",
+        explosao: "explosao.png",
+    };
 
-  for (let i in imagens) {
-    let img = new Image();
-    img.src = "assets/img/" + imagens[i];
-    img.onload = carregando;
-    totalImagens++;
-    imagens[i] = img; // Troca string pela imagem carregada
-  }
+    for (let i in imagens) {
+        let img = new Image();
+        img.src = "assets/img/" + imagens[i];
+        img.onload = carregando;
+        totalImagens++;
+        imagens[i] = img;
+    }
 }
 
-// Carregar música de fundo
+// Carregar música
 function carregarMusicas() {
-  musicaAcao = new Audio();
-  musicaAcao.src = "assets/sounds/musica-acao.mp3";
-  musicaAcao.load();
-  musicaAcao.volume = 0.5;
-  musicaAcao.muted = false;
-  musicaAcao.loop = true;
+    musicaAcao = new Audio();
+    musicaAcao.src = "assets/sounds/musica-acao.mp3";
+    musicaAcao.load();
+    musicaAcao.volume = 0.5;
+    musicaAcao.muted = false;
+    musicaAcao.loop = true;
 
-  atualizarInterfaceAudio();
+    atualizarInterfaceAudio();
 }
 
-// Atualiza o estado do botão de áudio
+// Atualizar botão de áudio
 function atualizarInterfaceAudio() {
-  const linkVolume = document.getElementById('link_volume');
+    const linkVolume = document.getElementById('link_volume');
+    if (!linkVolume) return;
 
-  if (musicaAcao.muted) {
-    linkVolume.textContent = "Áudio: off";
-    linkVolume.classList.add('muted');
-  } else {
-    linkVolume.textContent = "Áudio: on";
-    linkVolume.classList.remove('muted');
-  }
+    if (musicaAcao.muted) {
+        linkVolume.textContent = "Áudio: off";
+        linkVolume.classList.add('muted');
+    } else {
+        linkVolume.textContent = "Áudio: on";
+        linkVolume.classList.remove('muted');
+    }
 }
-
 
 /* ============================================================
    3 - TELA DE LOADING
 ============================================================ */
 function carregando() {
-  context.save();
-  context.drawImage(imagens.espaco, 0, 0, canvas.width, canvas.height);
-  context.fillStyle = 'white';
-  context.strokeStyle = 'black';
-  context.font = '30px sans-serif';
-  context.fillText("Acabe com estes OVNIS!", 50, 100);
-  carregadas++;
-  context.restore();
+    context.save();
+    context.drawImage(imagens.espaco, 0, 0, canvas.width, canvas.height);
+    context.fillStyle = 'white';
+    context.strokeStyle = 'black';
+    context.font = '30px sans-serif';
+    context.fillText("Acabe com estes OVNIS!", 50, 100);
+    carregadas++;
+    context.restore();
 
-  if (carregadas == totalImagens) {
-    iniciarObjetos();
-    mostrarLinkJogar();
-    // Esconde botões na tela de abertura
-    esconderBotoesControle();
-  }
+    if (carregadas == totalImagens) {
+        iniciarObjetos();
+        mostrarLinkJogar();
+        esconderBotoesControle();
+        esconderBotaoVoltar();
+    }
 }
-
 
 /* ============================================================
    4 - OBJETOS DO JOGO
 ============================================================ */
 function iniciarObjetos() {
-  // Núcleo do jogo
-  animacao = new Animacao(context);
-  teclado = new Teclado(document);
-  colisor = new Colisor();
+    animacao = new Animacao(context);
+    teclado = new Teclado(document);
+    colisor = new Colisor();
 
-  // Fundos
-  espaco = new Fundo(context, imagens.espaco);
-  estrelas = new Fundo(context, imagens.estrelas);
-  nuvens = new Fundo(context, imagens.nuvens);
+    espaco = new Fundo(context, imagens.espaco);
+    estrelas = new Fundo(context, imagens.estrelas);
+    nuvens = new Fundo(context, imagens.nuvens);
 
-  // Player e HUD
-  nave = new Nave(context, teclado, imagens.nave, imagens.explosao);
-  painel = new Painel(context, nave);
+    nave = new Nave(context, teclado, imagens.nave, imagens.explosao);
+    painel = new Painel(context, nave);
 
-  // Adiciona sprites na animação
-  animacao.novoSprite(espaco);
-  animacao.novoSprite(estrelas);
-  animacao.novoSprite(nuvens);
-  animacao.novoSprite(painel);
-  animacao.novoSprite(nave);
+    animacao.novoSprite(espaco);
+    animacao.novoSprite(estrelas);
+    animacao.novoSprite(nuvens);
+    animacao.novoSprite(painel);
+    animacao.novoSprite(nave);
 
-  // Colisões
-  colisor.novoSprite(nave);
-  animacao.novoProcessamento(colisor);
+    colisor.novoSprite(nave);
+    animacao.novoProcessamento(colisor);
 
-  configuracoesIniciais();
+    configuracoesIniciais();
 }
 
-// Configurações padrão do jogo
 function configuracoesIniciais() {
-  // Velocidade dos fundos
-  espaco.velocidade = 70;
-  estrelas.velocidade = 160;
-  nuvens.velocidade = 510;
-
-  // Nave - REMOVIDA a rotação automática
-  nave.posicionar();
-  nave.velocidade = 210;
-  nave.girando = false; // Nova propriedade para controlar rotação
-
-  // Inimigos
-  criacaoInimigos();
-
-  // Game Over ao perder todas vidas
-  nave.acabaramVidas = function () {
-    animacao.desligar();
-    gameOver();
-  };
-
-  /* ============================================================
-     5 - PONTUAÇÃO E COLISÕES
-  ============================================================ */
-  // Pontuação e progressão de nível
-  colisor.aoColidir = function (o1, o2) {
-    if ((o1 instanceof Tiro && o2 instanceof Ovni) ||
-        (o1 instanceof Ovni && o2 instanceof Tiro)) {
-
-      painel.pontuacao += 10;
-
-      // Calcula nível atual
-      let novoNivel = Math.floor(painel.pontuacao / 20) + 1;
-      if (novoNivel > nave.nivel) {
-        nave.nivel = novoNivel;
-
-        // Aumenta velocidades
-        espaco.velocidade += 5;
-        estrelas.velocidade += 8;
-        nuvens.velocidade += 12;
-
-        // Acelera inimigos já em tela
-        for (let i = 0; i < animacao.sprites.length; i++) {
-          if (animacao.sprites[i] instanceof Ovni) {
-            animacao.sprites[i].velocidade += 20;
-          }
-        }
-
-        console.log("Subiu para nível:", nave.nivel);
-      }
-    }
-  };
-}
-
-
-/* ============================================================
-   6 - INIMIGOS (OVNIS)
-============================================================ */
-// Geração contínua de inimigos
-function criacaoInimigos() {
-  criadorInimigos = {
-    ultimoOvni: new Date().getTime(),
-
-    processar: function () {
-      let agora = new Date().getTime();
-      let decorrido = agora - this.ultimoOvni;
-      if (decorrido > 1000) {
-        novoOvni();
-        this.ultimoOvni = agora;
-      }
-    }
-  };
-
-  animacao.novoProcessamento(criadorInimigos);
-}
-
-// Criar inimigo
-function novoOvni() {
-  let imgOvni = imagens.ovni;
-  let ovni = new Ovni(context, imgOvni, imagens.explosao);
-
-  ovni.velocidade = Math.floor(500 + Math.random() * (1000 - 500 + 1));
-  ovni.x = Math.floor(Math.random() * (canvas.width - imgOvni.width + 1));
-  ovni.y = -imgOvni.height;
-
-  animacao.novoSprite(ovni);
-  colisor.novoSprite(ovni);
-}
-
-
-/* ============================================================
-   7 - CONTROLES E INTERFACE
-============================================================ */
-// Pausar ou retomar jogo
-function pausarJogo() {
-  if (confirmacaoSairAtiva) return; // Não permite pausar durante confirmação
-  
-  if (animacao.ligado) {
-    animacao.desligar();
-    musicaAcao.pause();
-    ativarTiro(false);
-
-    context.save();
-    context.fillStyle = "white";
-    context.strokeStyle = "black";
-    context.font = "50px sans-serif";
-    context.fillText("PAUSADO", 130, 250);
-    context.restore();
-  } else {
-    criadorInimigos.ultimoOvni = new Date().getTime();
-    animacao.ligar();
-    musicaAcao.play();
-    ativarTiro(true);
-  }
-}
-
-// Alternar texto do botão Pausar
-function pausarJogoBotao() {
-  pausarJogo();
-  atualizarBotaoPausar();
-}
-
-// Atualiza o texto do botão Pausar/Continuar
-function atualizarBotaoPausar() {
-  const botaoPausar = document.getElementById('link_pausar');
-  
-  if (primeiraVezSair) {
-    botaoPausar.textContent = "Continuar";
-  } else {
-    botaoPausar.textContent = animacao.ligado ? "Pausar" : "Continuar";
-  }
-}
-
-// Mostrar/ocultar botões de controle
-function mostrarBotoesControle() {
-  document.getElementById('link_pausar').style.display = "inline-block";
-  document.getElementById('link_sair').style.display = "inline-block";
-}
-
-function esconderBotoesControle() {
-  document.getElementById('link_pausar').style.display = "none";
-  document.getElementById('link_sair').style.display = "none";
-}
-
-// Sair e encerrar - AGORA COM CONFIRMAÇÃO EM DUAS ETAPAS
-function sairDoJogo() {
-  if (confirmacaoSairAtiva) return;
-  
-  if (!primeiraVezSair) {
-    // Primeira vez que clica em "Sair" - mostra confirmação
-    primeiraVezSair = true;
-    mostrarConfirmacaoSair();
-    atualizarBotaoPausar(); // Muda "Pausar" para "Continuar"
-  } else {
-    // Segunda vez que clica em "Sair" - confirma saída
-    confirmarSaida();
-  }
-}
-
-// Nova função para mostrar confirmação de saída
-function mostrarConfirmacaoSair() {
-  confirmacaoSairAtiva = true;
-  animacao.desligar();
-  musicaAcao.pause();
-  
-  // Esconde botões originais durante a confirmação
-  esconderBotoesControle();
-  
-  // Desenha overlay semi-transparente
-  context.save();
-  context.fillStyle = 'rgba(0, 0, 0, 0.7)';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  
-  // Desenha caixa de confirmação
-  const caixaLargura = 340;
-  const caixaAltura = 200;
-  const caixaX = (canvas.width - caixaLargura) / 2;
-  const caixaY = (canvas.height - caixaAltura) / 2;
-  
-  context.fillStyle = '#1a1a1a';
-  context.strokeStyle = '#ffffff';
-  context.lineWidth = 2;
-  context.fillRect(caixaX, caixaY, caixaLargura, caixaAltura);
-  context.strokeRect(caixaX, caixaY, caixaLargura, caixaAltura);
-  
-  // Texto de confirmação
-  context.fillStyle = 'white';
-  context.font = 'bold 24px sans-serif';
-  context.textAlign = 'center';
-  context.fillText('Deseja realmente sair do jogo?', canvas.width / 2, caixaY + 50);
-  
-  context.font = '18px sans-serif';
-  context.fillText('Clique novamente em "Sair" para confirmar', canvas.width / 2, caixaY + 85);
-  context.fillText('ou em "Continuar" para voltar ao jogo', canvas.width / 2, caixaY + 110);
-  
-  // Desenha botões
-  const btnContinuarX = canvas.width / 2 - 120;
-  const btnSairX = canvas.width / 2 + 40;
-  const btnY = caixaY + 140;
-  const btnLargura = 100;
-  const btnAltura = 35;
-  
-  // Botão Continuar
-  context.fillStyle = '#4CAF50';
-  context.fillRect(btnContinuarX, btnY, btnLargura, btnAltura);
-  context.strokeRect(btnContinuarX, btnY, btnLargura, btnAltura);
-  context.fillStyle = 'white';
-  context.font = 'bold 16px sans-serif';
-  context.fillText('Continuar', btnContinuarX + btnLargura/2, btnY + 23);
-  
-  // Botão Sair
-  context.fillStyle = '#f44336';
-  context.fillRect(btnSairX, btnY, btnLargura, btnAltura);
-  context.strokeRect(btnSairX, btnY, btnLargura, btnAltura);
-  context.fillStyle = 'white';
-  context.fillText('Sair', btnSairX + btnLargura/2, btnY + 23);
-  
-  context.restore();
-  
-  // Adiciona evento de clique no canvas para os botões
-  canvas.addEventListener('click', verificarCliqueBotao);
-}
-
-// Verifica clique nos botões da confirmação
-function verificarCliqueBotao(event) {
-  if (!confirmacaoSairAtiva) return;
-  
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  
-  const caixaLargura = 340;
-  const caixaAltura = 200;
-  const caixaX = (canvas.width - caixaLargura) / 2;
-  const caixaY = (canvas.height - caixaAltura) / 2;
-  
-  const btnContinuarX = canvas.width / 2 - 120;
-  const btnSairX = canvas.width / 2 + 40;
-  const btnY = caixaY + 140;
-  const btnLargura = 100;
-  const btnAltura = 35;
-  
-  // Verifica clique no botão Continuar
-  if (x >= btnContinuarX && x <= btnContinuarX + btnLargura &&
-      y >= btnY && y <= btnY + btnAltura) {
-    cancelarSaida();
-  }
-  
-  // Verifica clique no botão Sair
-  if (x >= btnSairX && x <= btnSairX + btnLargura &&
-      y >= btnY && y <= btnY + btnAltura) {
-    confirmarSaida();
-  }
-}
-
-// Confirmar saída do jogo
-function confirmarSaida() {
-  confirmacaoSairAtiva = false;
-  primeiraVezSair = false;
-  canvas.removeEventListener('click', verificarCliqueBotao);
-  
-  musicaAcao.pause();
-  musicaAcao.currentTime = 0.0;
-  gameOver();
-  atualizarBotaoPausar(); // Restaura texto do botão
-}
-
-// Cancelar saída do jogo
-function cancelarSaida() {
-  confirmacaoSairAtiva = false;
-  primeiraVezSair = false;
-  canvas.removeEventListener('click', verificarCliqueBotao);
-  
-  // Mostra botões originais novamente
-  mostrarBotoesControle();
-  
-  animacao.ligar();
-  if (!musicaAcao.muted) {
-    musicaAcao.play();
-  }
-  
-  atualizarBotaoPausar(); // Restaura texto do botão
-}
-
-
-/* ============================================================
-   8 - TIROS
-============================================================ */
-// Ativar ou desativar tiro
-function ativarTiro(ativar) {
-  if (ativar) {
-    teclado.disparou(ESPACO, function () {
-      if (!confirmacaoSairAtiva) { // Só atira se não estiver em confirmação
-        nave.atirar();
-      }
-    });
-  } else {
-    teclado.disparou(ESPACO, null);
-  }
-}
-
-
-/* ============================================================
-   9 - INÍCIO E FIM DO JOGO
-============================================================ */
-// Exibir botão Jogar
-function mostrarLinkJogar() {
-  document.getElementById('link_jogar').style.display = "block";
-}
-
-// Ocultar botão Jogar
-function esconderLinkJogar() {
-  document.getElementById('link_jogar').style.display = "none";
-}
-
-// Alternar áudio on/off
-function toggleAudio() {
-  musicaAcao.muted = !musicaAcao.muted;
-  atualizarInterfaceAudio();
-}
-
-// Função unificada para iniciar/reiniciar o jogo
-function iniciarJogo() {
-  // Resetar estado do jogo se for um reinício
-  if (animacao) {
-    // Resetar nave e painel
-    nave.vidasExtras = 3;
-    painel.pontuacao = 0;
-    nave.nivel = 1;
-    nave.formatoAtual = 0;
-    nave.imagem = imagens.nave;
-    nave.largura = nave.imagem.width;
-    nave.altura = nave.imagem.height;
-    nave.girando = false; // Garante que não está girando
-    nave.posicionar();
-
-    // Resetar velocidades dos fundos
     espaco.velocidade = 70;
     estrelas.velocidade = 160;
     nuvens.velocidade = 510;
 
-    // Remover inimigos existentes
-    removerInimigos();
+    nave.posicionar();
+    nave.velocidade = 210;
+    nave.girando = false;
 
-    // Garantir que a nave está na animação e colisor
-    if (!animacao.sprites.includes(nave)) {
-      animacao.novoSprite(nave);
-    }
-    if (!colisor.sprites.includes(nave)) {
-      colisor.novoSprite(nave);
-    }
-  }
+    criacaoInimigos();
 
-  // Configurações comuns para iniciar e reiniciar
-  criadorInimigos.ultimoOvni = new Date().getTime();
-  confirmacaoSairAtiva = false; // Reseta confirmação
-  primeiraVezSair = false; // Reseta estado de confirmação
-  
-  // Remove event listener se existir
-  canvas.removeEventListener('click', verificarCliqueBotao);
+    nave.acabaramVidas = function () {
+        animacao.desligar();
+        gameOver();
+    };
 
-  ativarTiro(true);
-  teclado.disparou(ENTER, pausarJogo);
+    colisor.aoColidir = function (o1, o2) {
+        if ((o1 instanceof Tiro && o2 instanceof Ovni) ||
+            (o1 instanceof Ovni && o2 instanceof Tiro)) {
 
-  esconderLinkJogar();
-  
-  // Mostra botões de controle quando o jogo inicia
-  mostrarBotoesControle();
+            painel.pontuacao += 10;
+            let novoNivel = Math.floor(painel.pontuacao / 20) + 1;
 
-  if (!musicaAcao.muted) {
-    musicaAcao.currentTime = 0.0;
-    musicaAcao.play();
-  }
-  
-  animacao.ligar();
-  atualizarBotaoPausar(); // Atualiza texto do botão
+            if (novoNivel > nave.nivel) {
+                nave.nivel = novoNivel;
+                espaco.velocidade += 5;
+                estrelas.velocidade += 8;
+                nuvens.velocidade += 12;
+
+                for (let i = 0; i < animacao.sprites.length; i++) {
+                    if (animacao.sprites[i] instanceof Ovni) {
+                        animacao.sprites[i].velocidade += 20;
+                    }
+                }
+                console.log("Subiu para nível:", nave.nivel);
+            }
+        }
+    };
 }
 
-// Fim de jogo
-function gameOver() {
+/* ============================================================
+   5 - INIMIGOS (OVNIS)
+============================================================ */
+function criacaoInimigos() {
+    criadorInimigos = {
+        ultimoOvni: new Date().getTime(),
+
+        processar: function () {
+            let agora = new Date().getTime();
+            let decorrido = agora - this.ultimoOvni;
+            if (decorrido > 1000) {
+                novoOvni();
+                this.ultimoOvni = agora;
+            }
+        }
+    };
+    animacao.novoProcessamento(criadorInimigos);
+}
+
+function novoOvni() {
+    let imgOvni = imagens.ovni;
+    let ovni = new Ovni(context, imgOvni, imagens.explosao);
+
+    ovni.velocidade = Math.floor(500 + Math.random() * 501);
+    ovni.x = Math.floor(Math.random() * (canvas.width - imgOvni.width + 1));
+    ovni.y = -imgOvni.height;
+
+    animacao.novoSprite(ovni);
+    colisor.novoSprite(ovni);
+}
+
+/* ============================================================
+   6 - CONTROLES E INTERFACE
+============================================================ */
+function pausarJogo() {
+    if (confirmacaoSairAtiva) return;
+
+    if (animacao.ligado) {
+        animacao.desligar();
+        musicaAcao.pause();
+        ativarTiro(false);
+
+        context.save();
+        context.fillStyle = "white";
+        context.strokeStyle = "black";
+        context.font = "50px sans-serif";
+        context.fillText("PAUSADO", 130, 250);
+        context.restore();
+    } else {
+        criadorInimigos.ultimoOvni = new Date().getTime();
+        animacao.ligar();
+        musicaAcao.play();
+        ativarTiro(true);
+    }
+}
+
+function pausarJogoBotao() {
+    pausarJogo();
+    atualizarBotaoPausar();
+}
+
+function atualizarBotaoPausar() {
+    const botaoPausar = document.getElementById('link_pausar');
+    if (!botaoPausar) return;
+    botaoPausar.textContent = animacao.ligado ? "Pausar" : "Continuar";
+}
+
+function mostrarBotoesControle() {
+    const btnPausar = document.getElementById('link_pausar');
+    const btnSair = document.getElementById('link_sair');
+
+    if (btnPausar) btnPausar.style.display = "inline-block";
+    if (btnSair) btnSair.style.display = "inline-block";
+}
+
+function esconderBotoesControle() {
+    const btnPausar = document.getElementById('link_pausar');
+    const btnSair = document.getElementById('link_sair');
+
+    if (btnPausar) btnPausar.style.display = "none";
+    if (btnSair) btnSair.style.display = "none";
+}
+
+function mostrarBotaoVoltar() {
+    const btnVoltar = document.getElementById('link_voltar');
+    if (btnVoltar) btnVoltar.classList.remove('hidden');
+}
+
+function esconderBotaoVoltar() {
+    const btnVoltar = document.getElementById('link_voltar');
+    if (btnVoltar) btnVoltar.classList.add('hidden');
+}
+
+function sairDoJogo() {
+  if (confirmacaoSairAtiva) return;
+
+  confirmacaoSairAtiva = true;
+
+  // Pausa animação e música
+  if (animacao) animacao.desligar();
+  if (musicaAcao) musicaAcao.pause();
   ativarTiro(false);
-  teclado.disparou(ENTER, null);
 
-  musicaAcao.pause();
-  musicaAcao.currentTime = 0.0;
-
-  context.drawImage(imagens.espaco, 0, 0, canvas.width, canvas.height);
-
-  context.save();
-  context.fillStyle = 'white';
-  context.font = '70px sans-serif';
-  context.fillText('GAME OVER', 40, 200);
-  context.fillText('Pontos: ' + painel.pontuacao, 70, 280);
-  context.restore();
-
-  // Esconde botões de controle durante game over
   esconderBotoesControle();
-  mostrarLinkJogar();
+
+  // Remove classe hidden para mostrar overlay
+  if (overlay) overlay.classList.remove('hidden');
 }
 
-// Limpa inimigos restantes
-function removerInimigos() {
-  if (!animacao || !animacao.sprites) return;
-  
-  for (let i = animacao.sprites.length - 1; i >= 0; i--) {
-    if (animacao.sprites[i] instanceof Ovni) {
-      animacao.excluirSprite(animacao.sprites[i]);
+// CONTINUAR JOGANDO
+function continuarJogando() {
+    confirmacaoSairAtiva = false;
+    esconderOverlay();
+    mostrarBotoesControle();
+
+    animacao?.ligar();
+    if (!musicaAcao.muted) musicaAcao.play();
+    ativarTiro(true);
+
+    atualizarBotaoPausar();
+}
+
+// CONFIRMAR SAÍDA
+function confirmarSaida() {
+    confirmacaoSairAtiva = false;
+    esconderOverlay();
+
+    musicaAcao?.pause();
+    musicaAcao.currentTime = 0;
+
+    gameOver();
+    atualizarBotaoPausar();
+}
+
+/* ============================================================
+   7 - TIROS
+============================================================ */
+function ativarTiro(ativar) {
+    if (ativar) {
+        teclado.disparou(ESPACO, function () {
+            if (!confirmacaoSairAtiva) {
+                nave.atirar();
+            }
+        });
+    } else {
+        teclado.disparou(ESPACO, null);
     }
-  }
+}
+
+/* ============================================================
+   8 - INÍCIO E FIM DO JOGO
+============================================================ */
+function mostrarLinkJogar() {
+    const btnJogar = document.getElementById('link_jogar');
+    if (btnJogar) btnJogar.classList.remove('hidden');
+}
+
+function esconderLinkJogar() {
+    const btnJogar = document.getElementById('link_jogar');
+    if (btnJogar) btnJogar.classList.add('hidden');
+}
+
+function toggleAudio() {
+    musicaAcao.muted = !musicaAcao.muted;
+    atualizarInterfaceAudio();
+}
+
+function iniciarJogo() {
+    if (animacao) {
+        nave.vidasExtras = 3;
+        painel.pontuacao = 0;
+        nave.nivel = 1;
+        nave.formatoAtual = 0;
+        nave.imagem = imagens.nave;
+        nave.largura = nave.imagem.width;
+        nave.altura = nave.imagem.height;
+        nave.girando = false;
+        nave.posicionar();
+
+        espaco.velocidade = 70;
+        estrelas.velocidade = 160;
+        nuvens.velocidade = 510;
+
+        removerInimigos();
+
+        if (!animacao.sprites.includes(nave)) animacao.novoSprite(nave);
+        if (!colisor.sprites.includes(nave)) colisor.novoSprite(nave);
+    }
+
+    animacao.ligar();
+    if (!musicaAcao.muted) musicaAcao.play();
+
+    ativarTiro(true);
+    mostrarBotoesControle();
+    esconderLinkJogar();
+    esconderBotaoVoltar();
+    esconderOverlay();
+    confirmacaoSairAtiva = false;
+
+    atualizarBotaoPausar();
+}
+
+function removerInimigos() {
+    if (!animacao || !animacao.sprites) return;
+    for (let i = animacao.sprites.length - 1; i >= 0; i--) {
+        if (animacao.sprites[i] instanceof Ovni) animacao.excluirSprite(animacao.sprites[i]);
+    }
+
+    if (!colisor || !colisor.sprites) return;
+    for (let i = colisor.sprites.length - 1; i >= 0; i--) {
+        if (colisor.sprites[i] instanceof Ovni) colisor.excluirSprite(colisor.sprites[i]);
+    }
+}
+
+function gameOver() {
+    animacao.desligar();
+    musicaAcao.pause();
+    musicaAcao.currentTime = 0;
+
+    context.save();
+    context.fillStyle = 'rgba(0,0,0,0.7)';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = 'white';
+    context.strokeStyle = 'black';
+    context.font = 'bold 40px sans-serif';
+    context.textAlign = 'center';
+    context.fillText("GAME OVER", canvas.width/2, 180);
+    context.strokeText("GAME OVER", canvas.width/2, 180);
+
+    context.font = '24px sans-serif';
+    context.fillText("Pontuação: " + painel.pontuacao, canvas.width/2, 230);
+
+    context.font = '20px sans-serif';
+    context.fillText("Clique em 'Voltar' para recomeçar", canvas.width/2, 280);
+    context.restore();
+
+    esconderBotoesControle();
+    mostrarBotaoVoltar();
+    esconderLinkJogar();
+    esconderOverlay();
+}
+
+function voltarTelaCarregamento() {
+    animacao.desligar();
+    musicaAcao.pause();
+    musicaAcao.currentTime = 0;
+
+    esconderBotaoVoltar();
+    esconderBotoesControle();
+    esconderOverlay();
+    mostrarLinkJogar();
+
+    carregando();
 }
