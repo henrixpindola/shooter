@@ -84,7 +84,7 @@ function carregarImagens() {
 // Carregar música
 function carregarMusicas() {
     musicaAcao = new Audio();
-    musicaAcao.src = "assets/sounds/musica-acao.mp3";
+    musicaAcao.src = "assets/sounds/musica-acao.wav";
     musicaAcao.load();
     musicaAcao.volume = 0.5;
     musicaAcao.muted = false;
