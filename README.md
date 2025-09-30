@@ -7,7 +7,7 @@ Controle sua nave espacial, destrua inimigos e suba de nível enquanto desvia de
 
 ## 🎮 Descrição
 
-Shooter Geometric é um arcade onde você pilota uma nave pelo cosmos enfrentando ondas de inimigos geométricos. O projeto foi pensado para ser tanto divertido quanto didático — ótimo para aprender e demonstrar conceitos de animação, colisão, física simples e interação com o usuário.
+Shooter Geometric é um arcade onde você pilota uma nave pelo cosmos enfrentando ondas de inimigos extraterrestres. O projeto foi pensado para ser tanto divertido quanto didático — ótimo para aprender e demonstrar conceitos de animação, colisão, física simples e interação com o usuário.
 
 ---
 
@@ -15,10 +15,8 @@ Shooter Geometric é um arcade onde você pilota uma nave pelo cosmos enfrentand
 
 * 🎯 **Controles Precisos** — setas do teclado + espaço para atirar
 * 🚀 **Sistema de Níveis** — velocidade/dificuldade aumentam conforme a pontuação
-* 💫 **Universo Dinâmico** — fundo em parallax com múltiplas camadas
 * 💾 **Sistema de Save/Load** — múltiplos slots com overlay de gerenciamento
-* 🎵 **Áudio Imersivo** — trilha e efeitos via Web Audio API
-* 📱 **Design Responsivo** — funciona em desktops, tablets e smartphones
+
 
 ---
 
@@ -28,12 +26,11 @@ Shooter Geometric é um arcade onde você pilota uma nave pelo cosmos enfrentand
 
 * ← ↑ ↓ → : mover a nave
 * **Espaço** : atirar
-* **P** : pausar / continuar
 
 **Objetivo**
 
-* Destrua OVNIs inimigos para ganhar pontos.
-* A cada **20 pontos** você sobe de nível.
+* Destrua ETs inimigos para ganhar pontos.
+* A cada **80 pontos** você sobe de nível.
 * Evite colisões para não perder vidas.
 * Sobreviva o máximo possível para alcançar a maior pontuação.
 
@@ -59,12 +56,6 @@ Shooter Geometric é um arcade onde você pilota uma nave pelo cosmos enfrentand
 
   * Node.js
   * Express.js
-
-* **Ferramentas de Desenvolvimento:**
-
-  * Nodemon (hot reload do backend)
-  * Concurrently (executa frontend e backend juntos)
-  * Cross-env (variáveis de ambiente multiplataforma)
 
 ---
 
@@ -156,14 +147,8 @@ http://localhost:3000
 
 ## 🧾 Autores
 
-* [Henrique Espindola](https://github.com/henrixpindola)
 * [Franciele Ávila](https://github.com/franavila15)
-
----
-
-## 📜 Licença
-
-MIT — sinta-se livre para usar, modificar e contribuir.
+* [Henrique Espindola](https://github.com/henrixpindola)
 
 ---
 

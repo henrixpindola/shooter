@@ -693,7 +693,7 @@ function configuracoesIniciais() {
   colisor.aoColidir = (o1, o2) => {
     if ((o1 instanceof Tiro && o2 instanceof Ovni) || (o1 instanceof Ovni && o2 instanceof Tiro)) {
       painel.pontuacao += 10
-      const novoNivel = Math.floor(painel.pontuacao / 20) + 1
+      const novoNivel = Math.floor(painel.pontuacao / 80) + 1
 
       if (novoNivel > nave.nivel) {
         nave.nivel = novoNivel
