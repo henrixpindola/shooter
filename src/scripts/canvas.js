@@ -215,14 +215,14 @@ function removerTodosOverlays() {
 // Função para pausar o jogo antes de mostrar a tela de salvar
 function pausarParaSalvar() {
   if (confirmacaoSairAtiva || !nave) return
-  
+
   // Pausa o jogo antes de mostrar a tela de salvar
   if (animacao.ligado) {
     animacao.desligar()
     musicaAcao.pause()
     ativarTiro(false)
   }
-  
+
   mostrarOverlaySalvar()
 }
 
@@ -632,8 +632,10 @@ function carregando() {
   context.drawImage(imagens.espaco, 0, 0, canvas.width, canvas.height)
   context.fillStyle = "white"
   context.strokeStyle = "black"
-  context.font = "30px sans-serif"
-  context.fillText("Acabe com estes ETs!", 50, 100)
+  context.font = "20px sans-serif"
+  context.fillText("SHOOTER GEOMETRIC!!!!!", 10, 100)
+  context.fillText("DIRECIONAIS ← ↑ ↓ → para se movimentar", 10, 200)
+  context.fillText("e ESPAÇO para atirar!", 10, 230)
   carregadas++
   context.restore()
 

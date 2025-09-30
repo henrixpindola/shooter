@@ -8,10 +8,6 @@
   </head>
   <body>
     <header class="header">
-      <div class="header-logo">
-        <img src="../assets/img/nave.png" alt="Nave Shooter" />
-        <span>Shooter Geometric</span>
-      </div>
       <nav class="header-nav">
         <a href="/" class="active">Jogo</a>
         <a href="/sobre">Sobre</a>
@@ -24,17 +20,23 @@
 
       <!-- Controles -->
       <div class="controles">
-        <button id="link_volume" class="controle-btn btn-volume">Áudio: on</button>
+        <button id="link_volume" class="controle-btn btn-volume">
+          Áudio: on
+        </button>
         <button id="link_pausar" class="controle-btn btn-pause">Pausar</button>
         <button id="link_sair" class="controle-btn btn-exit">Sair</button>
-        <button id="link_salvar" class="controle-btn btn-save">Salvar Jogo</button>
+        <button id="link_salvar" class="controle-btn btn-save">
+          Salvar Jogo
+        </button>
       </div>
 
       <!-- Botão central para iniciar -->
       <div class="playbtn-container">
         <button id="link_jogar" class="playbtn hidden">Começaaaar!</button>
         <button id="link_voltar" class="btn-voltar hidden">Voltar</button>
-        <button id="link_carregar" class="btn-load hidden">Carregar Jogo</button>
+        <button id="link_carregar" class="btn-load hidden">
+          Carregar Jogo
+        </button>
       </div>
     </main>
 
@@ -56,8 +58,12 @@
       document.getElementById("link_sair").onclick = sairDoJogo;
       document.getElementById("link_jogar").onclick = iniciarJogo;
       document.getElementById("link_voltar").onclick = voltarTelaCarregamento;
-      document.getElementById("link_salvar").onclick = function() { mostrarOverlaySalvar(); };
-      document.getElementById("link_carregar").onclick = function() { mostrarOverlayCarregar(); };
+      document.getElementById("link_salvar").onclick = function () {
+        mostrarOverlaySalvar();
+      };
+      document.getElementById("link_carregar").onclick = function () {
+        mostrarOverlayCarregar();
+      };
     </script>
   </body>
 </html>
