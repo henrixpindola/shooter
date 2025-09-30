@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnSalvar = document.getElementById("link_salvar")
   if (btnSalvar) {
     btnSalvar.addEventListener("click", () => {
-      mostrarOverlaySalvar()
+      pausarParaSalvar()
     })
   }
 
@@ -212,6 +212,20 @@ function removerTodosOverlays() {
   overlays.forEach((overlay) => overlay.remove())
 }
 
+// Nova função para pausar o jogo antes de mostrar a tela de salvar
+function pausarParaSalvar() {
+  if (confirmacaoSairAtiva || !nave) return
+  
+  // Pausa o jogo antes de mostrar a tela de salvar
+  if (animacao.ligado) {
+    animacao.desligar()
+    musicaAcao.pause()
+    ativarTiro(false)
+  }
+  
+  mostrarOverlaySalvar()
+}
+
 function mostrarOverlaySalvar() {
   if (confirmacaoSairAtiva || !nave) return
 
@@ -229,7 +243,7 @@ function mostrarOverlaySalvar() {
                 ${gerarHTMLSlots("salvar")}
             </div>
             <div class="overlay-acoes">
-                <button id="btnVoltarSalvar" class="btn-voltar-overlay">Voltar</button>
+                <button id="btnContinuarJogandoSalvar" class="btn-continuar-overlay">Continuar Jogando</button>
             </div>
         </div>
     `
@@ -248,14 +262,22 @@ function mostrarOverlaySalvar() {
         // Slot vazio, salvar diretamente
         if (salvarJogo(slotNum)) {
           overlaySalvar.remove()
+          // Não retoma o jogo automaticamente - usuário precisa pressionar "Continuar Jogando"
         }
       }
     })
   })
 
+  // Evento para o botão "Continuar Jogando"
+  document.getElementById("btnContinuarJogandoSalvar").addEventListener("click", () => {
+    overlaySalvar.remove()
+    retomarJogoAposSalvar()
+  })
+
   // Evento para o botão voltar
   document.getElementById("btnVoltarSalvar").addEventListener("click", () => {
     overlaySalvar.remove()
+    retomarJogoAposSalvar()
   })
 }
 
@@ -348,6 +370,7 @@ function mostrarConfirmacaoSobrescrever(slot) {
   document.getElementById("btnConfirmarSobrescrever").addEventListener("click", () => {
     if (salvarJogo(slot)) {
       overlayConfirmacao.remove()
+      // Não retoma o jogo automaticamente - usuário precisa pressionar "Continuar Jogando"
     }
   })
 }
@@ -403,6 +426,16 @@ function gerarHTMLSlots(tipo) {
       }
     })
     .join("")
+}
+
+// Nova função para retomar o jogo após salvar
+function retomarJogoAposSalvar() {
+  if (!confirmacaoSairAtiva) {
+    animacao.ligar()
+    if (musicaAcao && !musicaAcao.muted) musicaAcao.play()
+    ativarTiro(true)
+    atualizarBotaoPausar()
+  }
 }
 
 // Função para iniciar jogo após carregar
@@ -545,7 +578,6 @@ function criarOverlay() {
             <div class="overlay-botoes">
                 <button id="btnContinuar">Continuar Jogando</button>
                 <button id="btnSairConfirmar">Sair do Jogo</button>
-                <button id="btnSalvarJogoOverlay">Salvar Jogo</button>
             </div>
         </div>
     `
@@ -553,10 +585,6 @@ function criarOverlay() {
 
   document.getElementById("btnContinuar").addEventListener("click", continuarJogando)
   document.getElementById("btnSairConfirmar").addEventListener("click", confirmarSaida)
-  document.getElementById("btnSalvarJogoOverlay").addEventListener("click", () => {
-    esconderOverlay()
-    mostrarOverlaySalvar()
-  })
 }
 
 // Mostrar/ocultar overlay
