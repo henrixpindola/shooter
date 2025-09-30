@@ -4,16 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Shooter Geometric - Jogo de Nave 2D</title>
-
-    <!-- ===========================
-       ESTILOS
-  ============================ -->
     <link rel="stylesheet" href="../src/styles/styles.css" />
   </head>
   <body>
-    <!-- ===========================
-       CABEÇALHO
-  ============================ -->
     <header class="header">
       <div class="header-logo">
         <img src="../assets/img/nave.png" alt="Nave Shooter" />
@@ -26,31 +19,25 @@
       </nav>
     </header>
 
-    <!-- ===========================
-       ÁREA PRINCIPAL DO JOGO
-  ============================ -->
     <main class="canvas">
       <canvas width="450" height="450" id="canvas_animacao"></canvas>
 
       <!-- Controles -->
       <div class="controles">
-        <button id="link_volume" class="controle-btn btn-volume">
-          Áudio: on
-        </button>
+        <button id="link_volume" class="controle-btn btn-volume">Áudio: on</button>
         <button id="link_pausar" class="controle-btn btn-pause">Pausar</button>
         <button id="link_sair" class="controle-btn btn-exit">Sair</button>
+        <button id="link_salvar" class="controle-btn btn-save">Salvar Jogo</button>
       </div>
 
       <!-- Botão central para iniciar -->
       <div class="playbtn-container">
         <button id="link_jogar" class="playbtn hidden">Começaaaar!</button>
         <button id="link_voltar" class="btn-voltar hidden">Voltar</button>
+        <button id="link_carregar" class="btn-load hidden">Carregar Jogo</button>
       </div>
     </main>
 
-    <!-- ===========================
-       SCRIPTS DO JOGO
-  ============================ -->
     <script src="./src/scripts/animacao.js"></script>
     <script src="./src/scripts/fundo.js"></script>
     <script src="./src/scripts/teclado.js"></script>
@@ -63,15 +50,14 @@
     <script src="./src/scripts/painel.js"></script>
     <script src="./src/scripts/canvas.js"></script>
 
-    <!-- ===========================
-       AÇÕES DOS BOTÕES
-  ============================ -->
     <script>
       document.getElementById("link_volume").onclick = toggleAudio;
       document.getElementById("link_pausar").onclick = pausarJogoBotao;
       document.getElementById("link_sair").onclick = sairDoJogo;
       document.getElementById("link_jogar").onclick = iniciarJogo;
       document.getElementById("link_voltar").onclick = voltarTelaCarregamento;
+      document.getElementById("link_salvar").onclick = function() { mostrarOverlaySalvar(); };
+      document.getElementById("link_carregar").onclick = function() { mostrarOverlayCarregar(); };
     </script>
   </body>
 </html>

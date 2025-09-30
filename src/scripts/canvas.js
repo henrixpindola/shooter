@@ -10,6 +10,7 @@ let musicaAcao;
 let confirmacaoSairAtiva = false;
 
 let overlay = null;
+const TOTAL_SLOTS = 3;
 
 /* ============================================================
    2 - CARREGAMENTO DE RECURSOS
@@ -17,18 +18,504 @@ let overlay = null;
 carregarImagens();
 carregarMusicas();
 
-document.addEventListener('DOMContentLoaded', function() {
-  criarOverlay();
+/* ============================================================
+   INICIALIZAÇÃO
+============================================================ */
 
-  // Botão "Sair" - registra o clique
-  const btnSair = document.getElementById('link_sair');
-  if (btnSair) {
-      btnSair.addEventListener('click', sairDoJogo);
-  }
+document.addEventListener('DOMContentLoaded', function() {
+    criarOverlay();
+    
+    // Botão "Sair" - registra o clique
+    const btnSair = document.getElementById('link_sair');
+    if (btnSair) {
+        btnSair.addEventListener('click', sairDoJogo);
+    }
+    
+    // Botão "Salvar" - agora mostra diretamente os slots
+    const btnSalvar = document.getElementById('link_salvar');
+    if (btnSalvar) {
+        btnSalvar.addEventListener('click', function() {
+            mostrarOverlaySalvar();
+        });
+    }
+    
+    // Botão "Carregar" - mostra slots com botões de exclusão
+    const btnCarregar = document.getElementById('link_carregar');
+    if (btnCarregar) {
+        btnCarregar.addEventListener('click', function() {
+            mostrarOverlayCarregar();
+        });
+    }
+    
+    // Atualizar interface do botão carregar na inicialização
+    atualizarInterfaceCarregar();
 });
 
 
-// Cria overlay (sempre escondido)
+/* ============================================================
+   FUNÇÕES DE SALVAR E CARREGAR JOGO - MÚLTIPLOS SLOTS
+============================================================ */
+
+// Função para obter estado atual do jogo
+function obterEstadoJogo() {
+    return {
+        pontuacao: painel.pontuacao,
+        nivel: nave.nivel,
+        vidas: nave.vidasExtras,
+        velocidadeEspaco: espaco.velocidade,
+        velocidadeEstrelas: estrelas.velocidade,
+        velocidadeNuvens: nuvens.velocidade,
+        dataSalvamento: new Date().toISOString(),
+        posicaoNave: {
+            x: nave.x,
+            y: nave.y
+        }
+    };
+}
+
+// Função para salvar o jogo em um slot específico
+function salvarJogo(slot) {
+    if (confirmacaoSairAtiva || !nave) {
+        console.log('Não é possível salvar o jogo agora');
+        return false;
+    }
+    
+    try {
+        const estadoJogo = obterEstadoJogo();
+        localStorage.setItem(`jogoSalvo_slot_${slot}`, JSON.stringify(estadoJogo));
+        mostrarMensagemSalvamento(slot);
+        console.log(`Jogo salvo no slot ${slot} com sucesso!`, estadoJogo);
+        
+        // Atualizar interface para mostrar que existe jogo salvo
+        atualizarInterfaceCarregar();
+        return true;
+    } catch (error) {
+        console.error('Erro ao salvar jogo:', error);
+        mostrarErroSalvamento();
+        return false;
+    }
+}
+
+// Função para verificar se existe jogo salvo em algum slot
+function existeJogoSalvo() {
+    for (let i = 1; i <= TOTAL_SLOTS; i++) {
+        if (localStorage.getItem(`jogoSalvo_slot_${i}`) !== null) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Função para verificar se um slot específico está ocupado
+function slotOcupado(slot) {
+    return localStorage.getItem(`jogoSalvo_slot_${slot}`) !== null;
+}
+
+// Função para carregar jogo de um slot específico
+function carregarJogo(slot) {
+    if (!slotOcupado(slot)) {
+        console.log(`Nenhum jogo salvo encontrado no slot ${slot}`);
+        return false;
+    }
+    
+    try {
+        const estadoJogo = JSON.parse(localStorage.getItem(`jogoSalvo_slot_${slot}`));
+        
+        // Restaurar estado do jogo
+        painel.pontuacao = estadoJogo.pontuacao || 0;
+        nave.nivel = estadoJogo.nivel || 1;
+        nave.vidasExtras = estadoJogo.vidas || 3;
+        
+        // Restaurar velocidades
+        espaco.velocidade = estadoJogo.velocidadeEspaco || 70;
+        estrelas.velocidade = estadoJogo.velocidadeEstrelas || 160;
+        nuvens.velocidade = estadoJogo.velocidadeNuvens || 510;
+        
+        // Restaurar posição da nave se existir
+        if (estadoJogo.posicaoNave) {
+            nave.x = estadoJogo.posicaoNave.x;
+            nave.y = estadoJogo.posicaoNave.y;
+        } else {
+            nave.posicionar();
+        }
+        
+        // Limpar inimigos existentes e recriar com nível apropriado
+        removerInimigos();
+        
+        console.log(`Jogo carregado do slot ${slot} com sucesso!`, estadoJogo);
+        mostrarMensagemCarregamento(slot);
+        
+        // Se o jogo não estava rodando, iniciar após carregar
+        if (!animacao.ligado) {
+            iniciarJogoAposCarregar();
+        }
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Erro ao carregar jogo:', error);
+        mostrarErroCarregamento();
+        return false;
+    }
+}
+
+// Função para obter informações de um slot
+function obterInfoSlot(slot) {
+    const dados = localStorage.getItem(`jogoSalvo_slot_${slot}`);
+    if (!dados) return null;
+    
+    try {
+        const estado = JSON.parse(dados);
+        return {
+            slot: slot,
+            pontuacao: estado.pontuacao,
+            nivel: estado.nivel,
+            vidas: estado.vidas,
+            data: new Date(estado.dataSalvamento),
+            ocupado: true
+        };
+    } catch (error) {
+        console.error('Erro ao ler dados do slot:', error);
+        return null;
+    }
+}
+
+// Função para obter informações de todos os slots
+function obterTodosSlots() {
+    const slots = [];
+    for (let i = 1; i <= TOTAL_SLOTS; i++) {
+        slots.push(obterInfoSlot(i) || { slot: i, ocupado: false });
+    }
+    return slots;
+}
+
+// Função para deletar um slot
+function deletarSlot(slot) {
+    try {
+        localStorage.removeItem(`jogoSalvo_slot_${slot}`);
+        console.log(`Slot ${slot} deletado com sucesso`);
+        
+        // Fechar overlay atual e recarregar a visualização
+        const overlayAtual = document.querySelector('.overlay');
+        if (overlayAtual) {
+            overlayAtual.remove();
+        }
+        
+        // Recarregar o overlay apropriado
+        mostrarOverlayCarregar();
+        
+        return true;
+    } catch (error) {
+        console.error('Erro ao deletar slot:', error);
+        return false;
+    }
+}
+
+/* ============================================================
+   OVERLAYS DE SLOTS
+============================================================ */
+
+// Mostrar overlay para salvar jogo
+function mostrarOverlaySalvar() {
+    if (confirmacaoSairAtiva || !nave) return;
+    
+    const overlaySalvar = document.createElement('div');
+    overlaySalvar.className = 'overlay';
+    overlaySalvar.innerHTML = `
+        <div class="overlay-box">
+            <h2>Salvar Jogo</h2>
+            <p>Escolha um slot para salvar seu progresso:</p>
+            <div class="slots-container" id="slotsSalvar">
+                ${gerarHTMLSlots('salvar')}
+            </div>
+            <div class="overlay-acoes">
+                <button id="btnVoltarSalvar" class="btn-voltar-overlay">Voltar</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlaySalvar);
+
+    // Adicionar eventos aos slots
+    const slots = document.querySelectorAll('#slotsSalvar .slot-item');
+    slots.forEach(slot => {
+        slot.addEventListener('click', function() {
+            const slotNum = parseInt(this.dataset.slot);
+            
+            // Se o slot já estiver ocupado, mostrar confirmação
+            if (slotOcupado(slotNum)) {
+                mostrarConfirmacaoSobrescrever(slotNum, overlaySalvar);
+            } else {
+                // Slot vazio, salvar diretamente
+                if (salvarJogo(slotNum)) {
+                    overlaySalvar.remove();
+                }
+            }
+        });
+    });
+
+    // Evento para o botão voltar - CORREÇÃO APLICADA
+    document.getElementById('btnVoltarSalvar').addEventListener('click', function() {
+        overlaySalvar.remove();
+    });
+}
+
+// Mostrar overlay para carregar jogo (agora com botões de exclusão)
+function mostrarOverlayCarregar() {
+    const overlayCarregar = document.createElement('div');
+    overlayCarregar.className = 'overlay';
+    overlayCarregar.innerHTML = `
+        <div class="overlay-box">
+            <h2>Carregar Jogo</h2>
+            <p>Escolha um slot para carregar:</p>
+            <div class="slots-container" id="slotsCarregar">
+                ${gerarHTMLSlots('carregar')}
+            </div>
+            <div class="overlay-acoes">
+                <button id="btnVoltarCarregar" class="btn-voltar-overlay">Voltar</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlayCarregar);
+
+    // Adicionar eventos aos slots para carregar
+    const slots = document.querySelectorAll('#slotsCarregar .slot-item');
+    slots.forEach(slot => {
+        if (!slot.classList.contains('vazio')) {
+            slot.addEventListener('click', function() {
+                const slotNum = parseInt(this.dataset.slot);
+                if (carregarJogo(slotNum)) {
+                    overlayCarregar.remove();
+                }
+            });
+        }
+    });
+
+    // Adicionar eventos aos botões de exclusão
+    const botoesDeletar = document.querySelectorAll('#slotsCarregar .btn-deletar-slot');
+    botoesDeletar.forEach(botao => {
+        botao.addEventListener('click', function(e) {
+            e.stopPropagation(); // Impede que o clique no botão dispare o evento do slot
+            const slotNum = parseInt(this.dataset.slot);
+            if (confirm(`Tem certeza que deseja deletar o slot ${slotNum}?`)) {
+                deletarSlot(slotNum);
+            }
+        });
+    });
+
+    // Evento para o botão voltar - CORREÇÃO APLICADA
+    document.getElementById('btnVoltarCarregar').addEventListener('click', function() {
+        overlayCarregar.remove();
+    });
+}
+
+// Mostrar confirmação para sobrescrever slot
+function mostrarConfirmacaoSobrescrever(slot, overlayAnterior) {
+    const overlayConfirmacao = document.createElement('div');
+    overlayConfirmacao.className = 'overlay';
+    overlayConfirmacao.innerHTML = `
+        <div class="overlay-box">
+            <h2>Slot Ocupado</h2>
+            <p>O slot ${slot} já contém um jogo salvo. Deseja sobrescrevê-lo?</p>
+            <div class="overlay-botoes">
+                <button id="btnCancelarSobrescrever">Cancelar</button>
+                <button id="btnConfirmarSobrescrever">Sobrescrever</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlayConfirmacao);
+
+    document.getElementById('btnCancelarSobrescrever').addEventListener('click', function() {
+        overlayConfirmacao.remove();
+    });
+
+    document.getElementById('btnConfirmarSobrescrever').addEventListener('click', function() {
+        if (salvarJogo(slot)) {
+            overlayConfirmacao.remove();
+            if (overlayAnterior) {
+                overlayAnterior.remove();
+            }
+        }
+    });
+}
+
+// Gerar HTML dos slots
+function gerarHTMLSlots(tipo) {
+    const slots = obterTodosSlots();
+    return slots.map(slot => {
+        if (slot.ocupado) {
+            const dataFormatada = slot.data.toLocaleDateString('pt-BR');
+            const horaFormatada = slot.data.toLocaleTimeString('pt-BR', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            return `
+                <div class="slot-item ${tipo === 'carregar' ? 'slot-carregavel' : ''}" data-slot="${slot.slot}">
+                    <div class="slot-header">
+                        <span class="slot-numero">Slot ${slot.slot}</span>
+                        <span class="slot-data">${dataFormatada} ${horaFormatada}</span>
+                        ${tipo === 'carregar' ? '<button class="btn-deletar-slot" data-slot="' + slot.slot + '" title="Deletar slot">×</button>' : ''}
+                    </div>
+                    <div class="slot-info">
+                        <span class="slot-pontuacao">Pontos: ${slot.pontuacao}</span>
+                        <span class="slot-nivel">Nível: ${slot.nivel}</span>
+                        <span class="slot-vidas">Vidas: ${slot.vidas}</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            if (tipo === 'salvar') {
+                return `
+                    <div class="slot-item" data-slot="${slot.slot}">
+                        <div class="slot-header">
+                            <span class="slot-numero">Slot ${slot.slot}</span>
+                            <span class="slot-data">Vazio</span>
+                        </div>
+                        <div class="slot-vazio">Clique para salvar novo jogo</div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="slot-item vazio" data-slot="${slot.slot}">
+                        <div class="slot-header">
+                            <span class="slot-numero">Slot ${slot.slot}</span>
+                            <span class="slot-data">Vazio</span>
+                        </div>
+                        <div class="slot-vazio">Slot vazio</div>
+                    </div>
+                `;
+            }
+        }
+    }).join('');
+}
+
+// Função para iniciar jogo após carregar
+function iniciarJogoAposCarregar() {
+    animacao.ligar();
+    if (!musicaAcao.muted) musicaAcao.play();
+    ativarTiro(true);
+    mostrarBotoesControle();
+    esconderLinkJogar();
+    esconderBotaoVoltar();
+    esconderOverlay();
+    confirmacaoSairAtiva = false;
+    atualizarBotaoPausar();
+}
+
+// Atualizar interface do botão carregar
+function atualizarInterfaceCarregar() {
+    const btnCarregar = document.getElementById('link_carregar');
+    const btnJogar = document.getElementById('link_jogar');
+    if (!btnCarregar || !btnJogar) return;
+
+    if (!btnJogar.classList.contains('hidden')) {
+        btnCarregar.classList.remove('hidden');
+        btnCarregar.disabled = false;
+    } else {
+        btnCarregar.classList.add('hidden');
+    }
+}
+
+// Overlay para informar que não há jogos salvos
+function mostrarOverlayNenhumSalvo() {
+    const overlayNenhumSalvo = document.createElement('div');
+    overlayNenhumSalvo.className = 'overlay';
+    overlayNenhumSalvo.innerHTML = `
+        <div class="overlay-box">
+            <h2>Nenhum Jogo Salvo</h2>
+            <p>Não foi encontrado nenhum jogo salvo. Inicie um novo jogo e salve seu progresso!</p>
+            <div class="overlay-botoes">
+                <button id="btnFecharNenhumSalvo">Fechar</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlayNenhumSalvo);
+
+    document.getElementById('btnFecharNenhumSalvo').addEventListener('click', function() {
+        overlayNenhumSalvo.remove();
+    });
+}
+
+/* ============================================================
+   MENSAGENS DE FEEDBACK
+============================================================ */
+
+function mostrarMensagemSalvamento(slot) {
+    context.save();
+    context.fillStyle = 'rgba(0, 255, 0, 0.8)';
+    context.fillRect(canvas.width/2 - 120, canvas.height/2 - 25, 240, 50);
+    context.fillStyle = 'white';
+    context.font = 'bold 16px sans-serif';
+    context.textAlign = 'center';
+    context.fillText(`JOGO SALVO! (Slot ${slot})`, canvas.width/2, canvas.height/2);
+    context.restore();
+    
+    setTimeout(() => {
+        if (animacao.ligado) {
+            animacao.processar();
+            animacao.desenhar();
+        }
+    }, 2000);
+}
+
+function mostrarMensagemCarregamento(slot) {
+    context.save();
+    context.fillStyle = 'rgba(0, 150, 255, 0.8)';
+    context.fillRect(canvas.width/2 - 140, canvas.height/2 - 25, 280, 50);
+    context.fillStyle = 'white';
+    context.font = 'bold 16px sans-serif';
+    context.textAlign = 'center';
+    context.fillText(`JOGO CARREGADO! (Slot ${slot})`, canvas.width/2, canvas.height/2);
+    context.restore();
+    
+    setTimeout(() => {
+        if (animacao.ligado) {
+            animacao.processar();
+            animacao.desenhar();
+        }
+    }, 2000);
+}
+
+function mostrarErroSalvamento() {
+    context.save();
+    context.fillStyle = 'rgba(255, 0, 0, 0.8)';
+    context.fillRect(canvas.width/2 - 150, canvas.height/2 - 25, 300, 50);
+    context.fillStyle = 'white';
+    context.font = 'bold 16px sans-serif';
+    context.textAlign = 'center';
+    context.fillText('ERRO AO SALVAR JOGO!', canvas.width/2, canvas.height/2);
+    context.restore();
+    
+    setTimeout(() => {
+        if (animacao.ligado) {
+            animacao.processar();
+            animacao.desenhar();
+        }
+    }, 2000);
+}
+
+function mostrarErroCarregamento() {
+    context.save();
+    context.fillStyle = 'rgba(255, 0, 0, 0.8)';
+    context.fillRect(canvas.width/2 - 160, canvas.height/2 - 25, 320, 50);
+    context.fillStyle = 'white';
+    context.font = 'bold 16px sans-serif';
+    context.textAlign = 'center';
+    context.fillText('ERRO AO CARREGAR JOGO!', canvas.width/2, canvas.height/2);
+    context.restore();
+    
+    setTimeout(() => {
+        if (animacao.ligado) {
+            animacao.processar();
+            animacao.desenhar();
+        }
+    }, 2000);
+}
+
+/* ============================================================
+   ATUALIZAÇÃO DO OVERLAY
+============================================================ */
+
 function criarOverlay() {
     if (overlay) return;
 
@@ -41,6 +528,7 @@ function criarOverlay() {
             <div class="overlay-botoes">
                 <button id="btnContinuar">Continuar Jogando</button>
                 <button id="btnSairConfirmar">Sair do Jogo</button>
+                <button id="btnSalvarJogoOverlay">Salvar Jogo</button>
             </div>
         </div>
     `;
@@ -48,6 +536,9 @@ function criarOverlay() {
 
     document.getElementById('btnContinuar').addEventListener('click', continuarJogando);
     document.getElementById('btnSairConfirmar').addEventListener('click', confirmarSaida);
+    document.getElementById('btnSalvarJogoOverlay').addEventListener('click', function() {
+        mostrarOverlaySalvar();
+    });
 }
 
 // Mostrar/ocultar overlay
@@ -116,7 +607,7 @@ function carregando() {
     context.fillStyle = 'white';
     context.strokeStyle = 'black';
     context.font = '30px sans-serif';
-    context.fillText("Acabe com estes OVNIS!", 50, 100);
+    context.fillText("Acabe com estes ETs!", 50, 100);
     carregadas++;
     context.restore();
 
@@ -265,22 +756,34 @@ function atualizarBotaoPausar() {
 function mostrarBotoesControle() {
     const btnPausar = document.getElementById('link_pausar');
     const btnSair = document.getElementById('link_sair');
+    const btnSalvar = document.getElementById('link_salvar');
+    const btnCarregar = document.getElementById('link_carregar');
 
     if (btnPausar) btnPausar.style.display = "inline-block";
     if (btnSair) btnSair.style.display = "inline-block";
+    if (btnSalvar) btnSalvar.style.display = "inline-block";
+    if (btnCarregar) {
+        // Durante o jogo, o botão Carregar fica escondido
+        btnCarregar.classList.add('hidden');
+    }
 }
 
 function esconderBotoesControle() {
     const btnPausar = document.getElementById('link_pausar');
     const btnSair = document.getElementById('link_sair');
+    const btnSalvar = document.getElementById('link_salvar');
 
     if (btnPausar) btnPausar.style.display = "none";
     if (btnSair) btnSair.style.display = "none";
+    if (btnSalvar) btnSalvar.style.display = "none";
 }
 
 function mostrarBotaoVoltar() {
     const btnVoltar = document.getElementById('link_voltar');
+    const btnCarregar = document.getElementById('link_carregar');
+    
     if (btnVoltar) btnVoltar.classList.remove('hidden');
+    if (btnCarregar) btnCarregar.classList.add('hidden');
 }
 
 function esconderBotaoVoltar() {
@@ -349,12 +852,20 @@ function ativarTiro(ativar) {
 ============================================================ */
 function mostrarLinkJogar() {
     const btnJogar = document.getElementById('link_jogar');
+    const btnCarregar = document.getElementById('link_carregar');
+    
     if (btnJogar) btnJogar.classList.remove('hidden');
+    
+    // Atualiza a visibilidade do botão Carregar
+    atualizarInterfaceCarregar();
 }
 
 function esconderLinkJogar() {
     const btnJogar = document.getElementById('link_jogar');
+    const btnCarregar = document.getElementById('link_carregar');
+    
     if (btnJogar) btnJogar.classList.add('hidden');
+    if (btnCarregar) btnCarregar.classList.add('hidden');
 }
 
 function toggleAudio() {
@@ -364,6 +875,7 @@ function toggleAudio() {
 
 function iniciarJogo() {
     if (animacao) {
+        // Sempre inicia um jogo novo, não carrega automaticamente
         nave.vidasExtras = 3;
         painel.pontuacao = 0;
         nave.nivel = 1;
@@ -448,4 +960,27 @@ function voltarTelaCarregamento() {
     mostrarLinkJogar();
 
     carregando();
+}
+
+/* ============================================================
+   FUNÇÕES DE COMPATIBILIDADE
+============================================================ */
+
+// Função para carregar jogo (compatibilidade com o HTML antigo)
+function carregarJogo() {
+    if (!existeJogoSalvo()) {
+        mostrarOverlayNenhumSalvo();
+        return false;
+    }
+    mostrarOverlayCarregar();
+    return true;
+}
+
+// Função para salvar jogo (compatibilidade com o HTML antigo)
+function salvarJogo() {
+    if (confirmacaoSairAtiva || !nave) {
+        console.log('Não é possível salvar o jogo agora');
+        return;
+    }
+    mostrarOverlaySalvar();
 }

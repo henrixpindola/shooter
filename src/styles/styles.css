@@ -224,26 +224,43 @@ body {
 
 /* Estilo unificado */
 .playbtn,
-.btn-voltar {
-  color: #fff;
-  font-size: 16px;
-  font-family: sans-serif;
-  text-shadow: 1px 1px 3px black;
-  padding: 0.8rem 1.5rem;
-  border-radius: 12px;
-  border: 2px solid rgba(56, 189, 248, 0.5);
-  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 120px;
+.btn-voltar, 
+.btn-load {
+    color: #fff;
+    font-size: 16px;
+    font-family: sans-serif;
+    text-shadow: 1px 1px 3px black;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    border: 2px solid rgba(56, 189, 248, 0.5);
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
 }
 
 .playbtn:hover,
-.btn-voltar:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.15);
-  box-shadow: 0 6px 16px rgba(56, 189, 248, 0.6);
+.btn-voltar:hover, 
+.btn-load:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.15);
+    box-shadow: 0 6px 16px rgba(56, 189, 248, 0.6);
+}
+
+/* Estilo específico para o botão Carregar quando não há jogo salvo */
+.btn-load:disabled {
+  background: linear-gradient(135deg, #64748b, #475569);
+  border: 2px solid rgba(100, 116, 139, 0.5);
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.4);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-load:disabled:hover {
+  transform: none;
+  filter: none;
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.4);
 }
 
 /* ===========================
@@ -418,15 +435,9 @@ button:hover {
 .sobre-anim img:nth-child(2) { animation-delay: 0.7s; }
 .sobre-anim img:nth-child(3) { animation-delay: 1.4s; }
 
-/* ===========================
-   UTILITÁRIOS
-=========================== */
 .volumebtn { all: unset; }
 .hidden { display: none; }
 
-/* ===========================
-   RESPONSIVIDADE
-=========================== */
 @media (max-width: 768px) {
   .container { padding: 2rem 1rem; top: 100px; }
 
@@ -535,3 +546,334 @@ button:hover {
 .overlay-botoes button:active {
   transform: translateY(0);
 }
+
+#btnFecharNenhumSalvo {
+  background-color: #2196F3;
+  color: white;
+}
+
+/* ===========================
+   OVERLAY DE SLOTS DE SALVAMENTO
+=========================== */
+.slots-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.slot-item {
+  background: rgba(15, 23, 42, 0.8);
+  border: 2px solid rgba(56, 189, 248, 0.3);
+  border-radius: 12px;
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.slot-item:hover {
+  border-color: var(--accent);
+  background: rgba(56, 189, 248, 0.1);
+  transform: translateY(-2px);
+}
+
+.slot-item.vazio {
+  border-color: rgba(100, 116, 139, 0.5);
+  background: rgba(71, 85, 105, 0.3);
+}
+
+.slot-item.vazio:hover {
+  border-color: rgba(100, 116, 139, 0.8);
+}
+
+.slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.slot-numero {
+  font-weight: bold;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+.slot-data {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.slot-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+.slot-pontuacao {
+  font-weight: bold;
+  color: #fbbf24;
+}
+
+.slot-nivel {
+  color: #34d399;
+}
+
+.slot-vidas {
+  color: #f87171;
+}
+
+.slot-vazio {
+  text-align: center;
+  color: #94a3b8;
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+.overlay-acoes {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.btn-voltar-overlay {
+  background: linear-gradient(135deg, #64748b, #475569) !important;
+}
+
+.btn-voltar-overlay:hover {
+  background: linear-gradient(135deg, #475569, #374151) !important;
+}
+
+/* ===========================
+   SISTEMA DE SLOTS
+=========================== */
+/* Estilos para o sistema de slots */
+.slots-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.slot-item {
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.slot-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #666;
+  transform: translateY(-2px);
+}
+
+.slot-item.vazio {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.slot-item.vazio:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: none;
+}
+
+.slot-carregavel {
+  cursor: pointer;
+}
+
+.slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.slot-numero {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.slot-data {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* BOTÃO DE DELETAR - CORREÇÃO APLICADA */
+.btn-deletar-slot {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  color: #888;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  z-index: 10;
+}
+
+.btn-deletar-slot:hover {
+  background: rgba(255, 68, 68, 0.1);
+  color: #ff4444;
+}
+
+.slot-info {
+  display: flex;
+  gap: 15px;
+  font-size: 14px;
+}
+
+.slot-vazio {
+  text-align: center;
+  font-style: italic;
+  opacity: 0.7;
+  padding: 10px 0;
+}
+
+.overlay-acoes {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.btn-voltar-overlay {
+  background: #666;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-voltar-overlay:hover {
+  background: #555;
+}
+
+/* Estilos base para overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.overlay-box {
+  background: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 10px;
+  padding: 25px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.overlay-box h2 {
+  margin-top: 0;
+  color: #fff;
+  text-align: center;
+  font-size: 24px;
+}
+
+.overlay-box p {
+  text-align: center;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+.overlay-botoes {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.overlay-botoes button {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  min-width: 120px;
+}
+
+.overlay-botoes button:hover {
+  background: #555;
+}
+
+.overlay-botoes button:first-child {
+  background: #4CAF50;
+}
+
+.overlay-botoes button:first-child:hover {
+  background: #45a049;
+}
+
+.overlay-botoes button:last-child {
+  background: #f44336;
+}
+
+.overlay-botoes button:last-child:hover {
+  background: #da190b;
+}
+
+/* Ajustes para responsividade */
+@media (max-width: 768px) {
+  .slot-info {
+      flex-direction: column;
+      gap: 5px;
+  }
+  
+  .slot-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+  }
+  
+  .overlay-box {
+      padding: 20px;
+      margin: 10px;
+  }
+  
+  .overlay-botoes {
+      flex-direction: column;
+  }
+  
+  .overlay-botoes button {
+      min-width: auto;
+      width: 100%;
+  }
+}
+
