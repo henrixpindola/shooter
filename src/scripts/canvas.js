@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnSair.addEventListener("click", sairDoJogo)
   }
 
-  // Botão "Salvar" - agora mostra diretamente os slots
+  // Botão "Salvar" - mostra diretamente os slots
   const btnSalvar = document.getElementById("link_salvar")
   if (btnSalvar) {
     btnSalvar.addEventListener("click", () => {
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 /* ============================================================
-   FUNÇÕES DE SALVAR E CARREGAR JOGO - MÚLTIPLOS SLOTS
+   FUNÇÕES DE SALVAR E CARREGAR JOGO
 ============================================================ */
 
 // Função para obter estado atual do jogo
@@ -212,7 +212,7 @@ function removerTodosOverlays() {
   overlays.forEach((overlay) => overlay.remove())
 }
 
-// Nova função para pausar o jogo antes de mostrar a tela de salvar
+// Função para pausar o jogo antes de mostrar a tela de salvar
 function pausarParaSalvar() {
   if (confirmacaoSairAtiva || !nave) return
   
@@ -274,7 +274,7 @@ function mostrarOverlaySalvar() {
     retomarJogoAposSalvar()
   })
 
-  // Evento para o botão voltar
+  // Evento para o botão voltar (REMOVIDO, agora só tem "Continuar Jogando")
   document.getElementById("btnVoltarSalvar").addEventListener("click", () => {
     overlaySalvar.remove()
     retomarJogoAposSalvar()
@@ -428,7 +428,7 @@ function gerarHTMLSlots(tipo) {
     .join("")
 }
 
-// Nova função para retomar o jogo após salvar
+// Função para retomar o jogo após salvar
 function retomarJogoAposSalvar() {
   if (!confirmacaoSairAtiva) {
     animacao.ligar()
@@ -463,26 +463,6 @@ function atualizarInterfaceCarregar() {
   } else {
     btnCarregar.classList.add("hidden")
   }
-}
-
-// Overlay para informar que não há jogos salvos
-function mostrarOverlayNenhumSalvo() {
-  const overlayNenhumSalvo = document.createElement("div")
-  overlayNenhumSalvo.className = "overlay"
-  overlayNenhumSalvo.innerHTML = `
-        <div class="overlay-box">
-            <h2>Nenhum Jogo Salvo</h2>
-            <p>Não foi encontrado nenhum jogo salvo. Inicie um novo jogo e salve seu progresso!</p>
-            <div class="overlay-botoes">
-                <button id="btnFecharNenhumSalvo">Fechar</button>
-            </div>
-        </div>
-    `
-  document.body.appendChild(overlayNenhumSalvo)
-
-  document.getElementById("btnFecharNenhumSalvo").addEventListener("click", () => {
-    overlayNenhumSalvo.remove()
-  })
 }
 
 /* ============================================================
@@ -645,7 +625,7 @@ function atualizarInterfaceAudio() {
 }
 
 /* ============================================================
-   3 - TELA DE LOADING
+   3 - TELA INICIAL
 ============================================================ */
 function carregando() {
   context.save()
@@ -731,7 +711,7 @@ function configuracoesIniciais() {
 }
 
 /* ============================================================
-   5 - INIMIGOS (OVNIS)
+   5 - INIMIGOS/ETs
 ============================================================ */
 function criacaoInimigos() {
   criadorInimigos = {
@@ -879,7 +859,7 @@ function confirmarSaida() {
    7 - TIROS
 ============================================================ */
 function ativarTiro(ativar) {
-  const ESPACO = 32 // Declare ESPACO variable here
+  const ESPACO = 32
   if (ativar) {
     teclado.disparou(ESPACO, () => {
       if (!confirmacaoSairAtiva) {

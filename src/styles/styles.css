@@ -1,5 +1,5 @@
 /* ===========================
-   VARIÁVEIS GLOBAIS
+   GLOBAIS
 =========================== */
 :root {
   --bg: #0f172a;
@@ -9,7 +9,7 @@
 }
 
 /* ===========================
-   RESET & BASE
+   DINÂMICAS
 =========================== */
 * {
   margin: 0;
@@ -36,7 +36,7 @@ body {
 }
 
 /* ===========================
-   HEADER (ESTILO UNIFICADO)
+   CABEÇALHO
 =========================== */
 .header {
   width: 100%;
@@ -93,7 +93,7 @@ body {
 }
 
 /* ===========================
-   CONTAINER PRINCIPAL
+   CONTAINER
 =========================== */
 .container {
   background: rgba(15, 23, 42, 0.92);
@@ -137,7 +137,7 @@ body {
 }
 
 /* ===========================
-   CONTROLES (TOPO ESQUERDO)
+   CONTROLES
 =========================== */
 .controles {
   position: fixed;
@@ -160,7 +160,9 @@ body {
   visibility: hidden;
 }
 
-/* Botões - estilo unificado */
+/* ===========================
+   BOTOES
+=========================== */
 .controle-btn {
   padding: 12px 20px;
   color: white;
@@ -222,7 +224,6 @@ body {
   align-items: center;
 }
 
-/* Estilo unificado */
 .playbtn,
 .btn-voltar, 
 .btn-load {
@@ -248,7 +249,6 @@ body {
     box-shadow: 0 6px 16px rgba(56, 189, 248, 0.6);
 }
 
-/* Estilo específico para o botão Carregar quando não há jogo salvo */
 .btn-load:disabled {
   background: linear-gradient(135deg, #64748b, #475569);
   border: 2px solid rgba(100, 116, 139, 0.5);
@@ -346,7 +346,6 @@ button:hover {
   background: #60a5fa;
 }
 
-/* Formulário de contato */
 .contato-form {
   display: flex;
   flex-direction: column;
@@ -400,83 +399,9 @@ button:hover {
 }
 
 /* ===========================
-   ANIMAÇÕES
-=========================== */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes flutuar {
-  0% { transform: translateY(0) scale(1); }
-  100% { transform: translateY(-30px) scale(1.08); }
-}
-
-.sobre-anim {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin: 2rem 0;
-}
-
-.sobre-anim img {
-  width: auto;
-  height: 48px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.6));
-  animation: flutuar 2s ease-in-out infinite alternate;
-}
-
-.sobre-anim img:nth-child(2) { animation-delay: 0.7s; }
-.sobre-anim img:nth-child(3) { animation-delay: 1.4s; }
-
-.volumebtn { all: unset; }
-.hidden { display: none; }
-
-@media (max-width: 768px) {
-  .container { padding: 2rem 1rem; top: 100px; }
-
-  .controles { top: 10px; left: 10px; padding: 10px; }
-
-  .controle-btn { width: 120px; padding: 10px 16px; font-size: 13px; }
-
-  .header { padding: 1rem 1.5rem; }
-
-  .header-nav { gap: 1rem; }
-
-  .header-nav a { font-size: 1rem; }
-}
-
-@media (max-width: 480px) {
-  .container { top: 90px; padding: 1.5rem 1rem; }
-
-  .controles { top: 5px; left: 5px; padding: 8px; }
-
-  .controle-btn { width: 100px; padding: 8px 12px; font-size: 12px; min-height: 40px; }
-
-  .header { padding: 0.8rem 1rem; }
-
-  .header-logo img { height: 30px; width: 30px; }
-
-  .header-nav { gap: 0.8rem; }
-
-  .header-nav a { font-size: 0.9rem; }
-
-  .sobre-anim { gap: 1rem; }
-
-  .sobre-anim img { height: 36px; }
-}
-
-/* ===========================
-   OVERLAY SYSTEM - ESTILOS UNIFICADOS COMPACTOS
+   OVERLAY
 =========================== */
 
-/* Overlay base */
 .overlay {
   position: fixed;
   top: 0;
@@ -496,7 +421,6 @@ button:hover {
   display: none;
 }
 
-/* Container principal do overlay - MAIS COMPACTO */
 .overlay-box {
   background: rgba(30, 41, 59, 0.95);
   padding: 1.8rem;
@@ -525,7 +449,6 @@ button:hover {
   opacity: 0.9;
 }
 
-/* Botões de ação do overlay - MAIS COMPACTOS */
 .overlay-botoes {
   display: flex;
   justify-content: center;
@@ -558,7 +481,6 @@ button:hover {
   transform: translateY(0);
 }
 
-/* Botões específicos para confirmação */
 .overlay-botoes button:first-child {
   background: linear-gradient(135deg, #10b981, #059669);
 }
@@ -576,7 +498,7 @@ button:hover {
 }
 
 /* ===========================
-   SLOTS SYSTEM - SALVAR/CARREGAR COMPACTO
+   SLOTS
 =========================== */
 
 .slots-container {
@@ -589,7 +511,6 @@ button:hover {
   padding: 0.3rem;
 }
 
-/* Item de slot individual - MAIS COMPACTO */
 .slot-item {
   background: rgba(15, 23, 42, 0.8);
   border: 2px solid rgba(56, 189, 248, 0.3);
@@ -625,7 +546,6 @@ button:hover {
   cursor: pointer;
 }
 
-/* Header do slot - MAIS COMPACTO */
 .slot-header {
   display: flex;
   justify-content: space-between;
@@ -646,7 +566,6 @@ button:hover {
   font-weight: 500;
 }
 
-/* Informações do slot salvo - MAIS COMPACTO */
 .slot-info {
   display: flex;
   justify-content: space-between;
@@ -678,7 +597,6 @@ button:hover {
   font-size: 0.9rem;
 }
 
-/* Botão deletar slot - MAIS COMPACTO */
 .btn-deletar-slot {
   background: rgba(239, 68, 68, 0.1);
   border: 1.5px solid rgba(239, 68, 68, 0.3);
@@ -706,7 +624,6 @@ button:hover {
   box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
 }
 
-/* Ações do overlay de slots - MAIS COMPACTO */
 .overlay-acoes {
   display: flex;
   justify-content: space-between;
@@ -737,7 +654,7 @@ button:hover {
 }
 
 /* ===========================
-   RESPONSIVIDADE PARA TELAS PEQUENAS
+   RESPONSIVIDADE E ANIMAÇÕES
 =========================== */
 
 @media (max-width: 768px) {
@@ -833,7 +750,6 @@ button:hover {
   }
 }
 
-/* Scrollbar mais fina para containers com scroll */
 .slots-container::-webkit-scrollbar {
   width: 4px;
 }
@@ -851,3 +767,79 @@ button:hover {
 .slots-container::-webkit-scrollbar-thumb:hover {
   background: #0ea5e9;
 }
+
+/* ===========================
+   ANIMAÇÕES
+=========================== */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes flutuar {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-30px) scale(1.08); }
+}
+
+.sobre-anim {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.sobre-anim img {
+  width: auto;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.6));
+  animation: flutuar 2s ease-in-out infinite alternate;
+}
+
+.sobre-anim img:nth-child(2) { animation-delay: 0.7s; }
+.sobre-anim img:nth-child(3) { animation-delay: 1.4s; }
+
+.volumebtn { all: unset; }
+.hidden { display: none; }
+
+@media (max-width: 768px) {
+  .container { padding: 2rem 1rem; top: 100px; }
+
+  .controles { top: 10px; left: 10px; padding: 10px; }
+
+  .controle-btn { width: 120px; padding: 10px 16px; font-size: 13px; }
+
+  .header { padding: 1rem 1.5rem; }
+
+  .header-nav { gap: 1rem; }
+
+  .header-nav a { font-size: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .container { top: 90px; padding: 1.5rem 1rem; }
+
+  .controles { top: 5px; left: 5px; padding: 8px; }
+
+  .controle-btn { width: 100px; padding: 8px 12px; font-size: 12px; min-height: 40px; }
+
+  .header { padding: 0.8rem 1rem; }
+
+  .header-logo img { height: 30px; width: 30px; }
+
+  .header-nav { gap: 0.8rem; }
+
+  .header-nav a { font-size: 0.9rem; }
+
+  .sobre-anim { gap: 1rem; }
+
+  .sobre-anim img { height: 36px; }
+}
+/* ===========================
+   FIM DO ARQUIVO
+=========================== */
