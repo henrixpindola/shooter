@@ -1,3 +1,7 @@
+Boa! 👌 Aqui está seu **README atualizado** com a devida **referência ao projeto base do Elton Santos**:
+
+---
+
 # 🚀 Shooter Geometric
 
 Um jogo de nave **2D com estilo geométrico**, desenvolvido em **HTML5 Canvas** e **JavaScript**.
@@ -7,7 +11,8 @@ Controle sua nave espacial, destrua inimigos e suba de nível enquanto desvia de
 
 ## 🎮 Descrição
 
-Shooter Geometric é um arcade onde você pilota uma nave pelo cosmos enfrentando ondas de inimigos extraterrestres. O projeto foi pensado para ser tanto divertido quanto didático — ótimo para aprender e demonstrar conceitos de animação, colisão, física simples e interação com o usuário.
+Shooter Geometric é um arcade onde você pilota uma nave pelo cosmos enfrentando ondas de inimigos extraterrestres.
+O projeto foi pensado para ser tanto divertido quanto didático — ótimo para aprender e demonstrar conceitos de **animação, colisão, física simples e interação com o usuário**.
 
 ---
 
@@ -16,7 +21,6 @@ Shooter Geometric é um arcade onde você pilota uma nave pelo cosmos enfrentand
 * 🎯 **Controles Precisos** — setas do teclado + espaço para atirar
 * 🚀 **Sistema de Níveis** — velocidade/dificuldade aumentam conforme a pontuação
 * 💾 **Sistema de Save/Load** — múltiplos slots com overlay de gerenciamento
-
 
 ---
 
@@ -93,23 +97,23 @@ Shooter Geometric é um arcade onde você pilota uma nave pelo cosmos enfrentand
 
 1. Instale as dependências:
 
-```sh
-npm install
-```
+   ```sh
+   npm install
+   ```
 
 2. Inicie o ambiente de desenvolvimento:
 
-```sh
-npm run dev
-```
+   ```sh
+   npm run dev
+   ```
 
 3. Abra no navegador:
 
-```
-http://localhost:3000
-```
+   ```
+   http://localhost:3000
+   ```
 
-> Exemplo de `scripts` úteis no `package.json` (sugestão):
+> Exemplo de `scripts` úteis no `package.json`:
 
 ```json
 "scripts": {
@@ -139,7 +143,7 @@ http://localhost:3000
 ## 🎨 Recursos Visuais & Áudio
 
 * Sprites geométricos personalizados e efeitos de explosão.
-* Fundo em parallax (várias camadas, velocidades diferentes).
+* Fundo em **parallax** (camadas com velocidades diferentes).
 * Trilha sonora em loop + efeitos para disparo, colisão e aumento de nível.
 * Controles visuais para volume/mute na UI.
 
@@ -152,6 +156,14 @@ http://localhost:3000
 
 ---
 
+## 🙏 Créditos
+
+Este projeto foi baseado no trabalho original de **[Elton Santos](https://github.com/eltonsantos/jogo-de-nave)**.
+Shooter Geometric é uma versão expandida e personalizada desse projeto, com novas funcionalidades como sistema de save/load, overlays modernos, trilha sonora e design responsivo.
+
+---
+
 ## 🤝 Contribuições
 
-Pull requests são bem-vindas! Para maiores mudanças, abra uma issue primeiro para discutir o que pretende alterar. Sugestões de melhorias (novos inimigos, power-ups, ranking online) são muito bem-vindas.
+Pull requests são bem-vindas! Para maiores mudanças, abra uma issue primeiro para discutir o que pretende alterar.
+Sugestões de melhorias (novos inimigos, power-ups, ranking online) são muito bem-vindas.
