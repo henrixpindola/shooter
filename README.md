@@ -1,7 +1,3 @@
-Boa! 👌 Aqui está seu **README atualizado** com a devida **referência ao projeto base do Elton Santos**:
-
----
-
 # 🚀 Shooter Geometric
 
 Um jogo de nave **2D com estilo geométrico**, desenvolvido em **HTML5 Canvas** e **JavaScript**.
